@@ -14,24 +14,12 @@ if not nltk.data.find('tokenizers/punkt'):
 
 location = sys.argv[1] + ".doap.com"
 
-if location == "sanramon.doap.com":
-    city = "San Ramon"
-    phone = "925-365-6030"
-elif location == "danville.doap.com":
-    city = "Danville"
-    phone = "925-725-6920"
-elif location == "alamo.doap.com":
-    city = "Alamo"
-    phone = "925-553-4710"
-else:
-    city = "Norcal East Bay"
-    phone = "833-289-3627"
 sku = sys.argv[2]
 
 credentials = {}
 creds_file_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
-    "../creds.txt"
+    "../creds2.txt"
 )
 
 with open(creds_file_path) as f:
@@ -45,6 +33,9 @@ with open(creds_file_path) as f:
             credentials[key] = value
 
 openai.api_key = credentials["openai.api_key"]
+city = credentials['city']
+phone = credentials['phone']
+
 auth = (
     credentials[location + "_consumer_key"],
     credentials[location + "_consumer_secret"]
@@ -53,7 +44,7 @@ auth = (
 def generate(new_pics_prompt):
     res = openai.Image.create(
         prompt=new_pics_prompt,
-        n=4,
+        n=1,
         size="1024x1024",
     )
     return res["data"][0]["url"]
@@ -170,6 +161,7 @@ for image in product['images']:
 new_pic_prompts = ["Create a picture of a happy guy holding a bag of weed.", 
                    "Create a picture of a cannabis bud up close.", 
                    "Create a picture of a cannabis plant up close.", 
+                   "Create a picture of a cartoon bong on a black background.", 
                    "Create a picture of a very pretty girl delivering a tiny package to a handsome guy."]
 new_image_urls = [generate(prompt) for prompt in new_pic_prompts]
 
@@ -177,18 +169,18 @@ for i, image in enumerate(product['images']):
     if i < len(new_image_urls):
         old_image_url = image['src']
         image['src'] = new_image_urls[i]
-        print(f"Old Image URL: {old_image_url}")
-        print(f"New Image URL: {image['src']}\n")
+        # print(f"Old Image URL: {old_image_url}")
+        # print(f"New Image URL: {image['src']}\n")
     else:
         break
 
 print(
     f"SKU: {sku}\n\n"
     f"Old name:\n{old_product_name}\n"
-    f"Old short_description:\n{old_short_description}\n"
-    f"Old description:\n{old_long_description}\n"
-    f"New name:\n{new_product_name}\n"
-    f"New short_description:\n{new_short_description}\n"
+    # f"Old short_description:\n{old_short_description}\n"
+    # f"Old description:\n{old_long_description}\n"
+    # f"New name:\n{new_product_name}\n"
+    # f"New short_description:\n{new_short_description}\n"
     # f"New description:\n{new_long_description}"
 )
 
