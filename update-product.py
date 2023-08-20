@@ -146,11 +146,6 @@ product['short_description'] = new_short_description
 old_long_description = product['description']
 product['description'] = new_long_description
 
-#new_pic_prompt = "Create a picture of cannabis growing in a field"
-# Get the image URL from OpenAI
-#new_image_url = generate(new_pic_prompt)
-
-# Update the product images with the new image
 for image in product['images']:
     del image['id']
     del image['date_created']
