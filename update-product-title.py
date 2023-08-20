@@ -70,16 +70,12 @@ response = openai.ChatCompletion.create(
     },
     {
         "role": "user",
-        "content": f"I have a product with a permalink '{product['permalink']}'"
-                   f"currently named '{product['name']}' with a short description of '{product['short_description']}' and a long description of '{product['description']}'. "
-                   f"I need a new but similar name for this product that respects the words that make up the permalink page name somewhat but will also help with SEO"
-                   f"Select a name that will most likely improve the product visibility in search engines. "
-                   f"Don't stray too far from the core idea of the original name and permalink page name which contains descriptive words separated by dashes coded in the url."
-                   f"Use the word Doap as an acronym for awesome if appropriate. "
+        "content": f"I have a woocommerce product with a slug'{product['slug']}'.  The slug contains words separated by a -."
+                   f"Come up with a new name using these words that will rank well with regard to SEO."
                    f"Limit the new product name to about 70 characters.  Do not use any punctuation or apostrophes or single or double quotes or dashes. "
-                   f"Use proper capitalization. If price is mentioned in the old title, then come up with a different name without the price in it.."
-                   f"If there is a mention of a certian volume like an eighth or a quarter or an ounce be sure to respect that and keep it in the name somehow."
-                   f"Never spell the word dope, always substitute doap. Dont use the phone number in the title."
+                   f"Use proper capitalization. If price is mentioned in the old title, then come up with a different name without the price in it."
+                   f"If there is a mention of a certain volume like an eighth or a quarter or an ounce be sure to keep it in the name somehow."
+                   f"Never use the word dope. Dont use the phone number in the title."
     },
 ]
 )
@@ -98,11 +94,13 @@ for image in product['images']:
     del image['date_modified']
     del image['date_modified_gmt']
 
-new_pic_prompts = ["Create a picture of a happy guy holding a bag of weed.", 
-                   "Create a picture of a cannabis bud up close.", 
-                   "Create a picture of a cannabis plant up close.", 
-                   "Create a picture of a cartoon bong on a black background.", 
-                   "Create a picture of a very pretty girl delivering a tiny package to a handsome guy."]
+new_pic_prompts = [
+                    f"Create a picture of a '{product['slug']}' keeping in mind this description '{product['short_description']}'.", 
+                    # f"Create a picture of a happy guy holding a bag of weed.", 
+                    # f"Create a picture of a '{product['slug']}'.", 
+                    # f"Create a picture of a very pretty girl delivering a tiny package to a handsome guy."
+                    # f"Create a picture of a very happy  person ."
+                   ]
 new_image_urls = [generate(prompt) for prompt in new_pic_prompts]
 
 for i, image in enumerate(product['images']):
