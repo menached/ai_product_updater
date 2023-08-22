@@ -16,7 +16,6 @@ creds_file_path = os.path.join(
     "../creds2.txt"
 )
 
-
 class Location:
     def __init__(self, website, user, city, phone):
         self.website = website
