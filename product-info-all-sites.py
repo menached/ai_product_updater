@@ -1,13 +1,8 @@
-# import openai
 import sys
-# import html
-# import re
 import json
 import os
-# import ssl
 import nltk
 import requests
-# from PIL import Image
 import pprint
 
 if not nltk.data.find('tokenizers/punkt'):
@@ -23,42 +18,47 @@ creds_file_path = os.path.join(
     "../creds2.txt"
 )
 
+
+websites = []
+
 with open(creds_file_path) as f:
     current_section = None
     for line in f:
         line = line.strip()
         if line.startswith("[") and line.endswith("]"):
             current_section = line[1:-1]
-        elif current_section == location:
-            key, value = line.split(" = ")
-            credentials[key] = value
+            websites.append(current_section)  # add websites to list
+        elif current_section is not None:  # ensures not storing of siteless data
+            key, value = line.split("=")
+            credentials[current_section.split(".")[0] + "_" + key.strip()] = value.strip()
 
-auth = (
-    credentials[location + "_consumer_key"],
-    credentials[location + "_consumer_secret"]
-)
+for website in websites:
+    auth = (
+        credentials[website.split(".")[0] + "_consumer_key"],
+        credentials[website.split(".")[0] + "_consumer_secret"]
+    )
 
-base_url = "https://" + location + "/wp-json/wc/v3/products"
+    base_url = "https://" + website + "/wp-json/wc/v3/products"
 
-response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
-response.raise_for_status()
+    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
+    response.raise_for_status()
 
-if not response.json():
-    print(f"No product found with SKU: {sku}")
-    exit()
+    if not response.json():
+        print(f"No product found with SKU: {sku} on website: {website}")
+        continue
 
-product = response.json()[0]
+    product = response.json()[0]
 
-with open('product.json', 'w') as json_file:
-    json.dump(product, json_file)
+    with open('product.json', 'a') as json_file:   # use 'a' for append
+        json_file.write(json.dumps(product) + "\n")  # write each product as a new line
 
-old_product_name = product['name']
+    old_product_name = product['name']
 
-image_count = 0
-for image in product['images']:
-    image_count = image_count + 1
-pprint.pprint (product)
-print("Image count", image_count)
-print()
-print()
-print("Next site...")
+    image_count = 0
+    for image in product['images']:
+        image_count = image_count + 1
+    pprint.pprint(product)
+    print("Image count", image_count)
+    print()
+    print()
+    print("Next site...")
