@@ -2,6 +2,7 @@ import openai
 import sys
 import json
 import os
+import pprint
 import nltk
 import requests
 
@@ -17,11 +18,13 @@ creds_file_path = os.path.join(
 )
 
 class Location:
-    def __init__(self, website, user, city, phone):
+    def __init__(self, website, user, city, phone, consumer_key, consumer_secret):
         self.website = website
         self.user = user
         self.city = city
         self.phone = phone
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
 
 locations = []
 
@@ -30,15 +33,19 @@ with open(creds_file_path) as f:
     user = None
     city = None
     phone = None
+    consumer_key = None
+    consumer_secret = None
     for line in f:
         line = line.strip()
         if line.startswith("[") and line.endswith("]"):
-            if website and user and city and phone:
-                locations.append(Location(website, user, city, phone))
+            if website and user and city and phone and consumer_key and consumer_secret:
+                locations.append(Location(website, user, city, phone, consumer_key, consumer_secret))
             website = line[1:-1]
             user = None
             city = None
             phone = None
+            consumer_key = None
+            consumer_secret = None
         elif line.startswith("["):
             website = line[1:]
         elif line.endswith("]"):
@@ -51,14 +58,19 @@ with open(creds_file_path) as f:
                 city = value
             elif key == "phone":
                 phone = value
+            elif key.lower().endswith("_consumer_key"):
+                consumer_key = value
+            elif key.lower().endswith("_consumer_secret"):
+                consumer_secret = value
 
-if website and user and city and phone:
-    locations.append(Location(website, user, city, phone))
+if website and user and city and phone and consumer_key and consumer_secret:
+    locations.append(Location(website, user, city, phone, consumer_key, consumer_secret))
 
 for location in locations:
-    print("Location:", location.website)
-    print("User:", location.user)
+    print()
+    print (sku, " ", location.website)
     print("City:", location.city)
     print("Phone:", location.phone)
-    print()
-
+    print(website, "_consumer_key:", location.consumer_key)
+    print(website, "_consumer_key:", location.consumer_secret)
+    # print()
