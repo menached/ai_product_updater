@@ -17,6 +17,7 @@ creds_file_path = os.path.join(
 )
 
 
+
 class Location:
     def __init__(self, website, user, city, phone):
         self.website = website
@@ -25,36 +26,33 @@ class Location:
         self.phone = phone
 
 locations = []
+current_location = None
+current_location = Location("", "", "", "")
 
 with open(creds_file_path) as f:
-    website = None
-    user = None
-    city = None
-    phone = None
     for line in f:
         line = line.strip()
         if line.startswith("[") and line.endswith("]"):
-            if website and user and city and phone:
-                locations.append(Location(website, user, city, phone))
-            website = line[1:-1]
-            user = None
-            city = None
-            phone = None
+            if current_location:
+                locations.append(current_location)
+            website = current_location.website + ".doap.com"
+            current_location = Location(website, "", "", "")
         elif line.startswith("["):
-            website = line[1:]
+            current_location = line[1:]
         elif line.endswith("]"):
-            website += line[:-1]
-        elif website and " = " in line:
+            current_location += line[:-1]
+            locations.append(current_location)
+        elif current_location and " = " in line:
             key, value = line.split(" = ")
             if key == "user":
-                user = value
+                current_location.user = value
             elif key == "city":
-                city = value
+                current_location.city = value
             elif key == "phone":
-                phone = value
+                current_location.phone = value
 
-if website and user and city and phone:
-    locations.append(Location(website, user, city, phone))
+if current_location:
+    locations.append(current_location)
 
 for location in locations:
     print("Location:", location.website)
@@ -62,4 +60,3 @@ for location in locations:
     print("City:", location.city)
     print("Phone:", location.phone)
     print()
-

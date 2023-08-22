@@ -43,6 +43,7 @@ for location in locations:
     openai.api_key = credentials.get(website + "_consumer_key")
     city = credentials.get(website + "_city", "N/A")
     phone = credentials.get(website + "_phone", "N/A")
+    print()
     print("Location:", location)
     print(
         f"\nWebsite: {website}\n"
@@ -50,4 +51,3 @@ for location in locations:
         f"Phone: {phone}\n"
         f"OpenAI Key: {openai.api_key}\n\n"
     )
-print(f"Total Locations: {len(locations)}")
