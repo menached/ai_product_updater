@@ -92,13 +92,23 @@ with open(creds_file_path) as f:
 for location in locations:
     print()
     # print("Config API and fetch product sku", sku, " from ", "https://"+website)
-    base_url = "https://" + website
-   
+    # base_url = "https://" + website
+    base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     print(base_url)
     print(openai.api_key)
     print(sku, location.website)
+    city = location.city
     print("City:", location.city)
+    phone = location.phone
     print("Phone:", location.phone)
-    print(website, "_consumer_key:", location.consumer_key)
-    print(website, "_consumer_key:", location.consumer_secret)
+    print(location.website, "_consumer_key:", location.consumer_key)
+    print(location.website, "_consumer_key:", location.consumer_secret)
+   
+    # auth = (
+        # credentials[location.website + "_consumer_key"],
+        # credentials[location.website + "_consumer_secret"]
+    # )
+    # pprint.pprint(auth)
+
+
 
