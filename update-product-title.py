@@ -2,6 +2,7 @@ import openai
 import sys
 import html
 import re
+import json
 import os
 import ssl
 import nltk
@@ -59,6 +60,9 @@ if not response.json():
     exit()
 
 product = response.json()[0]
+
+with open('product.json', 'w') as json_file:
+    json.dump(product, json_file)
 
 response = openai.ChatCompletion.create(
     # model="gpt-3.5-turbo",
