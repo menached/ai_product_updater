@@ -34,8 +34,8 @@ with open(creds_file_path) as f:
 
 for website in websites:
     auth = (
-        credentials[website.split(".")[0] + "_consumer_key"],
-        credentials[website.split(".")[0] + "_consumer_secret"]
+        credentials[website.split(".")[0] + ".doap.com_consumer_key"],
+        credentials[website.split(".")[0] + ".doap.com_consumer_secret"]
     )
 
     base_url = "https://" + website + "/wp-json/wc/v3/products"
