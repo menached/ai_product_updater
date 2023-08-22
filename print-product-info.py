@@ -6,12 +6,13 @@ import json
 import os
 import ssl
 import nltk
-import pdb; 
 import requests
 from PIL import Image
 import pprint
+import pdb; pdb.set_trace()
 
 if not nltk.data.find('tokenizers/punkt'):
+    breakpoint()
     nltk.download('punkt', quiet=True)
 
 location = sys.argv[1] + ".doap.com"
@@ -34,13 +35,9 @@ with open(creds_file_path) as f:
             key, value = line.split(" = ")
             credentials[key] = value
 
-pdb.set_trace()
 openai.api_key = credentials["openai.api_key"]
-pdb.set_trace()
 city = credentials['city']
-pdb.set_trace()
 phone = credentials['phone']
-pdb.set_trace()
 
 auth = (
     credentials[location + "_consumer_key"],
