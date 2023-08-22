@@ -102,13 +102,16 @@ for location in locations:
     phone = location.phone
     print("Phone:", location.phone)
     print(location.website, "_consumer_key:", location.consumer_key)
+    consumer_key = location.website + "_consumer_key:" + location.consumer_key
     print(location.website, "_consumer_key:", location.consumer_secret)
-   
-    # auth = (
-        # credentials[location.website + "_consumer_key"],
-        # credentials[location.website + "_consumer_secret"]
-    # )
-    # pprint.pprint(auth)
+    consumer_secret = location.website + "_consumer_key:" + location.consumer_secret
+    print(consumer_key) 
+    print(consumer_secret) 
+    auth = (
+         consumer_key,
+         consumer_secret,
+    )
+    pprint.pprint(auth)
 
 
 
