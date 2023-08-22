@@ -1,25 +1,19 @@
 import openai
 import sys
-import html
-import re
 import json
 import os
-import ssl
 import nltk
 import requests
-from PIL import Image
-import pprint
-import pdb; pdb.set_trace()
-
+import pdb; 
+# pdb.set_trace()
 if not nltk.data.find('tokenizers/punkt'):
-    breakpoint()
+    #breakpoint()
     nltk.download('punkt', quiet=True)
 
 location = sys.argv[1] + ".doap.com"
-
 sku = sys.argv[2]
-
 credentials = {}
+
 creds_file_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "../creds2.txt"
@@ -45,30 +39,9 @@ auth = (
 )
 
 
-base_url = "https://" + location + "/wp-json/wc/v3/products"
-
-response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
-response.raise_for_status()
-
-if not response.json():
-    print(f"No product found with SKU: {sku}")
-    exit()
-
-product = response.json()[0]
-
-with open('product.json', 'w') as json_file:
-    json.dump(product, json_file)
-
-old_product_name = product['name']
-
 print(
-    f"SKU: {sku}\n\n"
-    f"Old name:\n{old_product_name}\n"
+    f"Website: {location}\n"
+    f"City: {city}\n"
+    f"Phone: {phone}\n"
+    f"OpenAI Key: {openai.api_key}\n\n"
 )
-
-print(product)
-# Update the product with the new name
-#update_url = f'{base_url}/{product["id"]}'
-#update_response = requests.put(update_url, json=product, auth=auth)
-#update_response.raise_for_status()
-
