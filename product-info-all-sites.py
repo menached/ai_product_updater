@@ -42,13 +42,13 @@ auth = (
     credentials[location + "_consumer_secret"]
 )
 
-def generate(new_pics_prompt):
-    res = openai.Image.create(
-        prompt=new_pics_prompt,
-        n=1,
-        size="256x256",
-    )
-    return res["data"][0]["url"]
+# def generate(new_pics_prompt):
+    # res = openai.Image.create(
+        # prompt=new_pics_prompt,
+        # n=1,
+        # size="256x256",
+    # )
+    # return res["data"][0]["url"]
 
 base_url = "https://" + location + "/wp-json/wc/v3/products"
 
