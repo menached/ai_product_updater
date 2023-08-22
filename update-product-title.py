@@ -70,12 +70,8 @@ response = openai.ChatCompletion.create(
     },
     {
         "role": "user",
-        "content": f"I have a woocommerce product with a slug'{product['slug']}'.  The slug contains words separated by a -."
-                   f"Come up with a new name using these words that will rank well with regard to SEO."
-                   f"Limit the new product name to about 70 characters.  Do not use any punctuation or apostrophes or single or double quotes or dashes. "
-                   f"Use proper capitalization. If price is mentioned in the old title, then come up with a different name without the price in it."
-                   f"If there is a mention of a certain volume like an eighth or a quarter or an ounce be sure to keep it in the name somehow."
-                   f"Never use the word dope. Dont use the phone number in the title."
+        "content": f"Use this product slug '{product['slug']}' to rewrite the product title.  The slug contains words separated by a -."
+                   f"Use them to come up with a new name that is max 70 chars long and will rank well with regard to SEO."
     },
 ]
 )
@@ -86,20 +82,22 @@ new_product_name = html.unescape(re.sub('<.*?>', '', new_product_name))
 old_product_name = product['name']
 product['name'] = new_product_name
 
+image_count = 0
 # Update the product images with the new image
 for image in product['images']:
+    image_count = image_count + 1
     del image['id']
     del image['date_created']
     del image['date_created_gmt']
     del image['date_modified']
     del image['date_modified_gmt']
+print("Image count", image_count)
 
 new_pic_prompts = [
                     f"Create a picture of a '{product['slug']}' keeping in mind this description '{product['short_description']}'.", 
-                    # f"Create a picture of a happy guy holding a bag of weed.", 
-                    # f"Create a picture of a '{product['slug']}'.", 
-                    # f"Create a picture of a very pretty girl delivering a tiny package to a handsome guy."
-                    # f"Create a picture of a very happy  person ."
+                    f"Create a picture of this cannabis product: '{product['name']}'.", 
+                    f"Create a picture of a very pretty girl delivering a tiny package to a handsome guy."
+                    f"Create a picture of a hippie dancing."
                    ]
 new_image_urls = [generate(prompt) for prompt in new_pic_prompts]
 
