@@ -40,7 +40,7 @@ with open(creds_file_path) as f:
         if line.startswith("[") and line.endswith("]"):
             if website and user and city and phone and consumer_key and consumer_secret:
                 locations.append(Location(website, user, city, phone, consumer_key, consumer_secret))
-            website = line[1:-1]
+            website = line[1:-1].lstrip()  # Remove leading space
             user = None
             city = None
             phone = None
@@ -68,7 +68,7 @@ if website and user and city and phone and consumer_key and consumer_secret:
 
 for location in locations:
     print()
-    print (sku, " Website: https://",location.website.lstrip(" "))
+    print(sku, location.website)
     print("City:", location.city)
     print("Phone:", location.phone)
     print(website, "_consumer_key:", location.consumer_key)
