@@ -125,6 +125,7 @@ for location in locations:
 
     product = response.json()[0]
 
+
     with open('product.json', 'w') as json_file:
         json.dump(product, json_file)
 
