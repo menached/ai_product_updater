@@ -9,8 +9,8 @@ import os
 import pprint
 import nltk
 import requests
+import time
 
-# Check if the NLTK tokenizer is already installed; if not, install it
 if not nltk.data.find('tokenizers/punkt'):
     nltk.download('punkt', quiet=True)
 
@@ -97,25 +97,24 @@ for location in locations:
     # print("Config API and fetch product sku", sku, " from ", "https://"+website)
     # base_url = "https://" + website
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
-    print(base_url)
-    print(openai.api_key)
-    print(sku, location.website)
+    # print(base_url)
+    # print(openai.api_key)
+    # print(sku, location.website)
     city = location.city
-    print("City:", location.city)
+    # print("City:", location.city)
     phone = location.phone
-    print("Phone:", location.phone)
-    print(location.website + "_consumer_key:", location.consumer_key)
+    # print("Phone:", location.phone)
+    # print(location.website + "_consumer_key:", location.consumer_key)
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
-    print(location.website + "_consumer_secret:", location.consumer_secret)
+    # print(location.website + "_consumer_secret:", location.consumer_secret)
     consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
-    print(consumer_key) 
-    print(consumer_secret) 
+    # print(consumer_key) 
+    # print(consumer_secret) 
+
     auth = (
-         consumer_key,
-         consumer_secret,
-    )
-    #pprint.pprint(auth)
-    
+     location.consumer_key,
+     location.consumer_secret,
+)
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
 
@@ -124,7 +123,5 @@ for location in locations:
         exit()
 
     product = response.json()[0]
+    time.sleep(3)
     pprint.pprint(product)
-
-
-
