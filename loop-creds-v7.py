@@ -25,7 +25,8 @@ creds_file_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),  # Get the directory of the current file
     "../creds2.txt"  # Append the relative path to the credentials file
 )
-
+if os.path.exists('product.json'):
+    os.remove('product.json')
 
 # Define a class to represent a location
 class Location:
@@ -114,7 +115,7 @@ for location in locations:
     auth = (
      location.consumer_key,
      location.consumer_secret,
-)
+           )
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
 
@@ -123,5 +124,9 @@ for location in locations:
         exit()
 
     product = response.json()[0]
+
+    with open('product.json', 'w') as json_file:
+        json.dump(product, json_file)
+
     time.sleep(3)
     pprint.pprint(product)
