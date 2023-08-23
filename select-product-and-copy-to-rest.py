@@ -116,11 +116,18 @@ for location in locations:
     product = response.json()[0]
 
     time.sleep(1)
-    pprint.pprint(product)
+    # pprint.pprint(product)
+    print("Source Item")
+    print("From ", location)
+    print(product['sku'])
+    print(product['name'])
+    time.sleep(1)
     break    
 
 # Print the locations
-for location in locations:
+for location in locations[1:]:
+    print("Target Area: ", location )
+    time.sleep(1)
     print()
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     city = location.city
@@ -140,9 +147,10 @@ for location in locations:
         exit()
 
     product = response.json()[0]
-    dumpfilename = location.website + "-" + sku + ".json"
-    with open(dumpfilename, 'w') as json_file:
-        json.dump(product, json_file)
 
     time.sleep(1)
-    pprint.pprint(product)
+    print("Destination Item")
+    print("From ", location)
+    print(product['sku'])
+    print(product['name'])
+    # pprint.pprint(product)
