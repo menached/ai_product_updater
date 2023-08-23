@@ -2,6 +2,9 @@
 import openai
 import sys
 import json
+import html
+import re
+import ssl
 import os
 import pprint
 import nltk
@@ -101,17 +104,27 @@ for location in locations:
     print("City:", location.city)
     phone = location.phone
     print("Phone:", location.phone)
-    print(location.website, "_consumer_key:", location.consumer_key)
+    print(location.website + "_consumer_key:", location.consumer_key)
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
-    print(location.website, "_consumer_key:", location.consumer_secret)
-    consumer_secret = location.website + "_consumer_key:" + location.consumer_secret
+    print(location.website + "_consumer_secret:", location.consumer_secret)
+    consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
     print(consumer_key) 
     print(consumer_secret) 
     auth = (
          consumer_key,
          consumer_secret,
     )
-    pprint.pprint(auth)
+    #pprint.pprint(auth)
+    
+    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
+    response.raise_for_status()
+
+    if not response.json():
+        print(f"No product found with SKU: {sku}")
+        exit()
+
+    product = response.json()[0]
+    pprint.pprint(product)
 
 
 
