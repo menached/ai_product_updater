@@ -15,7 +15,8 @@ if not nltk.data.find('tokenizers/punkt'):
     nltk.download('punkt', quiet=True)
 
 # Get the first command line argument
-sku = sys.argv[1]
+location = sys.argv[1]
+sku = sys.argv[2]
 
 # Initialize an empty dictionary for credentials
 credentials = {}
@@ -91,7 +92,33 @@ with open(creds_file_path) as f:
     # Once we've parsed the entire file, check if there are any leftover variables and, if so, add another location
     if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
         locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
-        
+
+# Print the locations
+for location in locations:
+    print("Use " + location.website + " to get source product." + sku)
+    base_url = "https://" + location.website + "/wp-json/wc/v3/products"
+    city = location.city
+    phone = location.phone
+    consumer_key = location.website + "_consumer_key:" + location.consumer_key
+    consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
+
+    auth = (
+     location.consumer_key,
+     location.consumer_secret,
+           )
+    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
+    response.raise_for_status()
+
+    if not response.json():
+        print(f"No product found with SKU: {sku}")
+        exit()
+
+    product = response.json()[0]
+
+    time.sleep(1)
+    pprint.pprint(product)
+    break    
+
 # Print the locations
 for location in locations:
     print()
@@ -119,5 +146,3 @@ for location in locations:
 
     time.sleep(1)
     pprint.pprint(product)
-
-
