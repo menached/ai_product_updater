@@ -125,6 +125,26 @@ for location in locations:
 time.sleep(1)
 print("Turn AI loose...")
 for location in locations[1:]:
+    print("Using " + location.website + " as source product." + sku)
+    base_url = "https://" + location.website + "/wp-json/wc/v3/products"
+    city = location.city
+    phone = location.phone
+    consumer_key = location.website + "_consumer_key:" + location.consumer_key
+    consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
+
+    auth = (
+     location.consumer_key,
+     location.consumer_secret,
+           )
+    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
+    response.raise_for_status()
+
+    if not response.json():
+        print(f"No product found with SKU: {sku}")
+        exit()
+
+    product = response.json()[0]
+
     sku = product['sku']
     city = location.city
     response = openai.ChatCompletion.create(
@@ -132,12 +152,13 @@ for location in locations[1:]:
         messages = [
             {
                 "role": "system",
-                "content": "You are a helpful budtender who knows all about the cannabis industry in and around the city of '{city}' ",
+                "content": "You are a helpful budtender who knows all about the cannabis industry in Northern California. ",
                 },
             {
                 "role": "user",
                 "content": f"I have a product with SKU '{sku}' named '{product['name']}' with a short description of '{product['short_description']}'."
-                f"I need a new but similar name for this product that will both help with SEO and improve the product visibility in search engines and uses the city name in the title. "
+                f"I need a new but similar name for this product that will both help with SEO and improve the product visibility in search engines."
+                f"Use the city name '{city}' in the title. Examples of really good usage would be variations of things like Best in Burlingame or San Ramons best. "
                 f"Don't stray too far from the core idea of the original name.  Add the city name to the product title somehow. "
                 f"Limit the new product name to about 70 characters.  Do not use any punctuation or apostrophes or any single or double quotes. "
                 f"Use proper capitalization. Optimize all for SEO.  Never use prices in the new titles."
@@ -168,16 +189,11 @@ for location in locations[1:]:
     
     meetup_spots = response['choices'][0]['message']['content'].strip()
     meetup_spots = html.unescape(re.sub('<.*?>', '', meetup_spots))
-    product['description'] = product['description'] + " \n " + new_product_name
-    print("Suggested meetups spots for ",city,": ", meetup_spots)
-
-    # print("update pictures 2-10 with AI generated + good meta data")
-    # print("Run product update commands. ")
-
+    product['description'] = product['description'] + " \n  Have your " + new_product_name +  " delivered to your home or work or choose one of these great meetup spots in " + city + "\n" +  meetup_spots
+    #print("Suggested meetups spots for ",city,": ", meetup_spots)
+    #print("New product description", product['description'])
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
-    #time.sleep(1)
-    #pprint.pprint(product)
     break
 
