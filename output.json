@@ -1,0 +1,153 @@
+[{'name': 'vape-carts',
+  'src': 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts.jpg'},
+ {'name': 'vape-carts-1g',
+  'src': 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts-1g.jpg'},
+ {'name': 'GP-vape-carts',
+  'src': 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/GP-vape-carts-1.png'},
+ {'name': 'three-carts',
+  'src': 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/three-carts.png'},
+ {'name': 'pretty-girl-vaping-doap-vape-cart',
+  'src': 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/pretty-girl-vaping-doap-vape-cart.png'}]
+Processing:  "Burlingame"
+{'_links': {'collection': [{'href': 'https://burlingame.doap.com/wp-json/wc/v3/products'}],
+            'self': [{'href': 'https://burlingame.doap.com/wp-json/wc/v3/products/54931'}]},
+ 'attributes': [],
+ 'average_rating': '0.00',
+ 'backordered': False,
+ 'backorders': 'no',
+ 'backorders_allowed': False,
+ 'brands': [],
+ 'button_text': '',
+ 'catalog_visibility': 'visible',
+ 'categories': [{'id': 20, 'name': 'Concentrates', 'slug': 'concentrates'},
+                {'id': 40, 'name': 'Vape', 'slug': 'vape'}],
+ 'cross_sell_ids': [],
+ 'date_created': '2021-10-23T20:00:00',
+ 'date_created_gmt': '2021-10-24T03:00:00',
+ 'date_modified': '2023-08-24T12:11:21',
+ 'date_modified_gmt': '2023-08-24T19:11:21',
+ 'date_on_sale_from': None,
+ 'date_on_sale_from_gmt': None,
+ 'date_on_sale_to': None,
+ 'date_on_sale_to_gmt': None,
+ 'default_attributes': [],
+ 'description': '<p>GP Brand Cannabis Oil Vape Cartridges boast an impeccable '
+                'reputation for their ability to deliver potent and flavorful '
+                'hits. Each 1-gram cartridge is carefully crafted using the '
+                'finest quality cannabis oil, extracted from meticulously '
+                'cultivated plants. This ensures that users can savor the '
+                'nuanced flavors and aroma unique to GP Brand cartridges, '
+                'enhancing the overall vaping experience.</p>\n'
+                '<p>In addition to their exceptional quality, these cartridges '
+                'offer outstanding versatility, compatible with most standard '
+                '510-threaded vape pens. Whether one prefers a discreet pen or '
+                'a larger, more powerful device, these GP Brand Cannabis Oil '
+                'Vape Cartridges seamlessly fit with various vaping '
+                'setups.</p>\n'
+                '<p>With this deal, customers can revel in the knowledge that '
+                'they are secured not just one, but three cartridges, ensuring '
+                'an uninterrupted supply of high-quality cannabis oil for an '
+                'extended period. This allows users to fully immerse '
+                'themselves in the experience without the</p>\n',
+ 'dimensions': {'height': '', 'length': '', 'width': ''},
+ 'download_expiry': -1,
+ 'download_limit': -1,
+ 'downloadable': False,
+ 'downloads': [],
+ 'external_url': '',
+ 'featured': True,
+ 'grouped_products': [],
+ 'has_options': False,
+ 'id': 54931,
+ 'images': [{'name': 'vape-carts',
+             'src': 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts.jpg'},
+            {'name': 'vape-carts-1g',
+             'src': 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts-1g.jpg'},
+            {'name': 'GP-vape-carts',
+             'src': 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/GP-vape-carts-1.png'},
+            {'name': 'three-carts',
+             'src': 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/three-carts.png'},
+            {'name': 'pretty-girl-vaping-doap-vape-cart',
+             'src': 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/pretty-girl-vaping-doap-vape-cart.png'}],
+ 'low_stock_amount': None,
+ 'manage_stock': False,
+ 'menu_order': 0,
+ 'meta_data': [{'id': 23292,
+                'key': 'rank_math_internal_links_processed',
+                'value': '1'},
+               {'id': 23293,
+                'key': 'rank_math_analytic_object_id',
+                'value': '527'},
+               {'id': 23294,
+                'key': 'rank_math_internal_links_processed',
+                'value': '1'},
+               {'id': 23296, 'key': '_wp_old_date', 'value': '2023-03-28'},
+               {'id': 23297,
+                'key': 'rank_math_analytic_object_id',
+                'value': '527'},
+               {'id': 23317, 'key': 'wpaicg_indexed', 'value': 'yes'},
+               {'id': 23319,
+                'key': 'rank_math_focus_keyword',
+                'value': 'vape cart'},
+               {'id': 23320, 'key': 'rank_math_seo_score', 'value': '86'},
+               {'id': 23321, 'key': '_rank_math_gtin_code', 'value': ''},
+               {'id': 23322,
+                'key': 'rank_math_primary_pwb-brand',
+                'value': '0'},
+               {'id': 23323,
+                'key': 'rank_math_primary_product_cat',
+                'value': '0'},
+               {'id': 23324, 'key': 'cybocfi_hide_featured_image', 'value': ''},
+               {'id': 23326,
+                'key': 'rank_math_contentai_score',
+                'value': {'headingCount': '100',
+                          'linkCount': '0',
+                          'mediaCount': '62.22',
+                          'wordCount': '100'}},
+               {'id': 23552, 'key': '_wp_old_date', 'value': '2021-10-11'},
+               {'id': 23553, 'key': '_wp_old_date', 'value': '2021-10-12'},
+               {'id': 23554, 'key': '_wp_old_date', 'value': '2021-10-13'},
+               {'id': 23555, 'key': '_wp_old_date', 'value': '2021-10-14'},
+               {'id': 23556, 'key': '_wp_old_date', 'value': '2021-10-15'},
+               {'id': 23557, 'key': '_wp_old_date', 'value': '2021-10-16'},
+               {'id': 23558, 'key': '_wp_old_date', 'value': '2021-10-17'},
+               {'id': 23559, 'key': '_wp_old_date', 'value': '2021-10-18'},
+               {'id': 23560, 'key': '_wp_old_date', 'value': '2021-10-19'},
+               {'id': 23583, 'key': '_wp_old_date', 'value': '2021-10-20'},
+               {'id': 23589, 'key': '_wp_old_date', 'value': '2021-10-21'},
+               {'id': 23614, 'key': '_wp_old_date', 'value': '2021-10-22'},
+               {'id': 23647, 'key': '_wp_old_date', 'value': '2021-10-23'}],
+ 'name': '3 Pack 1g Vape Cartridge Refill - Prefilled with Premium Oil',
+ 'on_sale': True,
+ 'parent_id': 0,
+ 'permalink': 'https://burlingame.doap.com/vape-cartridge-assorted-strains-1g-2/',
+ 'price': '100',
+ 'price_html': '<del aria-hidden="true"><span class="woocommerce-Price-amount '
+               'amount"><bdi><span '
+               'class="woocommerce-Price-currencySymbol">&#36;</span>180.00</bdi></span></del> '
+               '<ins><span class="woocommerce-Price-amount amount"><bdi><span '
+               'class="woocommerce-Price-currencySymbol">&#36;</span>100.00</bdi></span></ins>',
+ 'purchasable': True,
+ 'purchase_note': '',
+ 'rating_count': 0,
+ 'regular_price': '180',
+ 'related_ids': [148, 191, 46, 54988, 54867],
+ 'reviews_allowed': False,
+ 'sale_price': '100',
+ 'shipping_class': '',
+ 'shipping_class_id': 0,
+ 'shipping_required': True,
+ 'shipping_taxable': True,
+ 'short_description': '<p>Introducing our unbeatable deal on a three pack of '
+                      'high-quality GP Brand Cannabis Oil Vape Cartridges, '
+                      'containing 1 gram each. These cartridges are a must-try '
+                      'for vape enthusiasts who value exceptional quality and '
+                      'flavor.</p>\n'
+                      '<p>GP Brand is well-known for their dedication to '
+                      'excellence in the cannabis industry, making these '
+                      'cartridges the perfect choice for a premium vaping '
+                      'experience. With this offer, you can grab three of '
+                      'these outstanding cartridges, ensuring you have a '
+                      'long-lasting supply for your vaping needs.</p>\n'
+                      '<p>Crafted with precision, GP Brand Cannabis Oil Vape '
+                      'Cartridges deliver potent hits with delightful flavors. '

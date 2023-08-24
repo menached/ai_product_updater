@@ -147,4 +147,5 @@ for location in locations[1:]:
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
-    #pprint.pprint(product)
+    pprint.pprint(product)
+    # time.sleep(30)
