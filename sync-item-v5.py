@@ -91,7 +91,7 @@ def generate(new_pics_prompt):
     res = openai.Image.create(
         prompt=new_pics_prompt,
         n=1,
-        size="256x256",
+        size="1024x1024",
     )
     return res["data"][0]["url"]
 
@@ -102,8 +102,6 @@ def remove_keys(images_data):
         new_image_data = {key: value for key, value in image_data.items() if key not in keys_to_remove}
         new_images_data.append(new_image_data)
     return new_images_data
-
-
 
 for location in locations:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
@@ -143,7 +141,6 @@ for location in locations[1:]:
     product = response.json()[0]
 
     product['name'] = source_product['name']
-
 
     image_count = 0
 # Update the product images with the new image
