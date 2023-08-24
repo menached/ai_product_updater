@@ -41,7 +41,6 @@ class Location:
         self.consumer_secret = consumer_secret
         self.api_key = api_key  # Here's the new attribute
 
-# Initialize an empty list to store locations
 locations = []
 
 # Open the credentials file
@@ -54,10 +53,8 @@ with open(creds_file_path) as f:
     consumer_key = None
     consumer_secret = None
     openai.api_key = None
-    # Loop over each line in the file
     for line in f:
         line = line.strip()  # Remove trailing and leading whitespace
-        # If the line is a website (indicated by brackets), store it and reset other variables
         if line.startswith("[") and line.endswith("]"):
             if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
                 locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
@@ -68,13 +65,10 @@ with open(creds_file_path) as f:
             consumer_key = None
             consumer_secret = None
             openai.api_key = None
-        # If the line starts with a bracket but doesn't end with one, it's a multiline website; just store the first part
         elif line.startswith("["):
             website = line[1:]
-        # If the line ends with a bracket but doesn't start with one, it's the end of a multiline website; append this part
         elif line.endswith("]"):
             website += line[:-1]
-        # If the line contains " = ", it's a key-value pair; parse and store it
         elif website and " = " in line:
             key, value = line.split(" = ")
             if key == "user":
@@ -90,7 +84,6 @@ with open(creds_file_path) as f:
             elif key == "openai.api_key":
                 openai.api_key = value
 
-    # Once we've parsed the entire file, check if there are any leftover variables and, if so, add another location
     if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
         locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
 
@@ -133,16 +126,9 @@ for location in locations[1:]:
      location.consumer_key,
      location.consumer_secret,
            )
-    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
-    response.raise_for_status()
-    product = response.json()[0]
-    # for image in product['images']:
-        # image_url = image['src']
-        # image_id = image['id']
-        # delete_url = f'{base_url}/{product["id"]}/images/{image_id}'
-        # delete_response = requests.delete(delete_url, auth=auth)
-        # delete_response.raise_for_status()
-        # print("Deleted image:", image_url)
+    # response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
+    # response.raise_for_status()
+    # product = response.json()[0]
 
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
@@ -151,22 +137,14 @@ for location in locations[1:]:
     product['short_description'] = source_product['short_description']
     product['description'] = source_product['description']
     del product['images']
-    product['images'] = random.shuffle(source_product['images'])
+    product['images'] = source_product['images']
     city = location.city
     phone = location.phone
-    #print("Source title:\n",source_product['name'])
-    #print("Dest title: \n", product['name'])
-    #print("Source images:\n",source_product['images'])
-    #print("Dest images: \n", product['images'])
-    #print("city",city)
-    #print("phone",phone)
-    #time.sleep(3)
+    print("Processing: ",city)
+    time.sleep(1)
     #pprint.pprint(product)
     #time.sleep(3)
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
     #pprint.pprint(product)
-
-
-
