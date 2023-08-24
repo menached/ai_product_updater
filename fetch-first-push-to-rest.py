@@ -181,15 +181,15 @@ for location in locations[1:]:
             {
                 "role": "user",
                 "content": f"I am a budtender looking to deliver cannabis products to my customers. "
-                f"Create a list of 5 possible public meetup spots in the area of '{city}' that can be used as meetup spots if the customer doesnt want to meet at home or work. "
-                f"The locations should be convenient, well known, and not near a school or police station. Do not add any other text besides the list of locations."
+                f"Create a list of 5 possible public meetup spots in the area of '{city}' that can be used as meetup spots if the customer doesnt want to meet at home or work. Prioritize discreet and easy access."
+                f"The locations should be convenient, well known, and not near a school or police station. Present them as a bullet list with short descriptions as to why they are good meetup spots."
                 },
             ]
         )
     
     meetup_spots = response['choices'][0]['message']['content'].strip()
     meetup_spots = html.unescape(re.sub('<.*?>', '', meetup_spots))
-    product['description'] = product['description'] + " \n  Have your " + new_product_name +  " delivered to your home or work or choose one of these great meetup spots in " + city + "\n" +  meetup_spots
+    product['description'] = product['description'] + " \n\n  Have your " + new_product_name +  " delivered to your home or work or choose one of these great meetup spots in " + city + "\n" +  meetup_spots
     #print("Suggested meetups spots for ",city,": ", meetup_spots)
     #print("New product description", product['description'])
     update_url = f'{base_url}/{product["id"]}'
