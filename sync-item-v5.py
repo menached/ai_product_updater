@@ -6,11 +6,15 @@ import html
 import re
 import ssl
 import os
+import math
+import glob
 import pprint
 import nltk
 import requests
 import time
 import random
+from PIL import Image, ImageDraw, ImageFont
+from PIL import UnidentifiedImageError
 
 if not nltk.data.find('tokenizers/punkt'):
     nltk.download('punkt', quiet=True)
@@ -103,6 +107,41 @@ def remove_keys(images_data):
         new_images_data.append(new_image_data)
     return new_images_data
 
+
+def add_watermark(image_url, watermark_text):
+    try:
+        # Download the image from the URL
+        response = requests.get(image_url, stream=True)
+        response.raise_for_status()
+
+        # Open the downloaded image using PIL
+        image = Image.open(response.raw)
+
+        # Create a drawing object for the image
+        draw = ImageDraw.Draw(image)
+
+        # Define the font and size for the watermark
+        font = ImageFont.truetype('path_to_font.ttf', size=40)
+
+        # Calculate the width and height of the watermark text
+        text_width, text_height = draw.textsize(watermark_text, font=font)
+
+        # Calculate the position to place the watermark text (centered on the image)
+        image_width, image_height = image.size
+        x = (image_width - text_width) // 2
+        y = (image_height - text_height) // 2
+
+        # Apply the watermark by drawing the text on the image
+        draw.text((x, y), text=watermark_text, font=font, fill=(255, 255, 255, 128))
+
+        # Save the modified image (you can overwrite the original file or save to a new file)
+        image.save('path_to_save_image.jpg')
+        
+    except Exception as e:
+        print(f"Error adding watermark to image: {str(e)}")
+
+
+
 for location in locations:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
@@ -123,6 +162,11 @@ for location in locations:
     pprint.pprint(product['images'])
     time.sleep(1)
     break
+
+
+
+
+
 
 for location in locations[1:]:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
@@ -155,16 +199,20 @@ for location in locations[1:]:
     del product['images']
     product['images'] = source_product['images']
 
-    # Generate two new image URLs
+    # Generate three new image URLs
     new_image_url1 = generate("Picture of a happy guy with a vape")
     new_image_url2 = generate("Picture of a happy girl smoking a joint")
     new_image_url3 = generate("Picture of a super stoned happy face!")
-    
+   
+    watermark_text = city + ' Doap'
+    # add_watermark(new_image_url1, watermark_text)
+    # add_watermark(new_image_url2, watermark_text)
+    # add_watermark(new_image_url3, watermark_text)
+
     # Add the new image URLs to the product['images'] array
     product['images'].append({'src': new_image_url1, 'name': 'Super happy stoner guy loves his vape!'})
     product['images'].append({'src': new_image_url2, 'name': 'Supewr happy stoner girl loves her joint!'})
     product['images'].append({'src': new_image_url3, 'name': 'Super Doap Stoney Cartoon Happy Face!'})
-
 
     new_short_description = source_product['short_description'] + " Get 1hr delivery bo calling  " + city.strip('"') + " Doap at " + phone.strip('"') + " anytime between 9-9 daily 7 days a week. We deliver to " + city.strip('"') + " and surrounding cities!" 
     new_short_description = new_short_description.replace("Alamo", city.strip('"'))
