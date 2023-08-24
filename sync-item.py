@@ -10,6 +10,7 @@ import pprint
 import nltk
 import requests
 import time
+import random
 
 if not nltk.data.find('tokenizers/punkt'):
     nltk.download('punkt', quiet=True)
@@ -124,8 +125,6 @@ for location in locations:
     time.sleep(1)
     break
 
-
-
 for location in locations[1:]:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
@@ -152,13 +151,13 @@ for location in locations[1:]:
     product['short_description'] = source_product['short_description']
     product['description'] = source_product['description']
     del product['images']
-    product['images'] = source_product['images']
+    product['images'] = random.shuffle(source_product['images'])
     city = location.city
     phone = location.phone
-    print("Source title:\n",source_product['name'])
-    print("Dest title: \n", product['name'])
-    print("Source images:\n",source_product['images'])
-    print("Dest images: \n", product['images'])
+    #print("Source title:\n",source_product['name'])
+    #print("Dest title: \n", product['name'])
+    #print("Source images:\n",source_product['images'])
+    #print("Dest images: \n", product['images'])
     #print("city",city)
     #print("phone",phone)
     #time.sleep(3)
@@ -168,4 +167,6 @@ for location in locations[1:]:
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
     #pprint.pprint(product)
+
+
 
