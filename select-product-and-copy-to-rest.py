@@ -13,7 +13,7 @@ import time
 
 if not nltk.data.find('tokenizers/punkt'):
     nltk.download('punkt', quiet=True)
-
+ 
 # Get the first command line argument
 location = sys.argv[1]
 sku = sys.argv[2]
@@ -126,6 +126,34 @@ time.sleep(1)
 print("Turn AI loose on these sites...")
 for location in locations[1:]:
     print(location.city)
+    sku = product['sku']
+    response = openai.ChatCompletion.create(
+        # model="gpt-3.5-turbo",
+        model="gpt-3.5-turbo",
+        messages = [
+            {
+                "role": "system",
+                "content": "You are a helpful budtender who knows all about the cannabis industry.",
+                },
+            {
+                "role": "user",
+                "content": f"I have a product with SKU '{sku}' named '{product['name']}' with a short description of '{product['short_description']}' and a long description of '{product['description']}'. "
+                f"I need a new but similar name for this product that will both help with SEO and improve the product visibility in search engines. "
+                f"Don't stray too far from the core idea of the original name.  Use the word Doap as an acronym for awesome. "
+                f"Limit the new product name to about 70 characters.  Do not use any punctuation or apostrophes or single or double quotes. "
+                f"Use proper capitalization. Optimize all for SEO.  Never use prices in the new titles."
+                f"Never spell the word dope, always substitute doap. Dont use the phone number in the title."
+                },
+            ]
+        )
+
+    new_product_name = response['choices'][0]['message']['content'].strip()
+    new_product_name = html.unescape(re.sub('<.*?>', '', new_product_name))
+    print("Suggested new product name: ", new_product_name)
+    print("Suggested new product name: ", new_product_name)
+    print("Suggested new product name: ", new_product_name)
+    print("Suggested new product name: ", new_product_name)
+    time.sleep(2)
     print()
 time.sleep(1)
 
