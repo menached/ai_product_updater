@@ -29,6 +29,16 @@ creds_file_path = os.path.join(
 if os.path.exists('product.json'):
     os.remove('product.json')
 
+
+def remove_keys(images_data):
+    keys_to_remove = ['date_created', 'date_created_gmt', 'date_modified', 'date_modivied_gmt', 'id']
+    new_images_data = []
+    for image_data in images_data:
+        new_image_data = {key: value for key, value in image_data.items() if key not in keys_to_remove}
+        new_images_data.append(new_image_data)
+    return new_images_data
+
+
 # Define a class to represent a location
 class Location:
     def __init__(self, website, user, city, phone, consumer_key, consumer_secret, api_key):
@@ -93,16 +103,6 @@ with open(creds_file_path) as f:
     if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
         locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
 
-
-def remove_keys(images_data):
-    keys_to_remove = ['date_created', 'date_created_gmt', 'date_modified', 'date_modified_gmt', 'id', 'alt']
-    new_images_data = []
-    for image_data in images_data:
-        new_image_data = {key: value for key, value in image_data.items() if key not in keys_to_remove}
-        new_images_data.append(new_image_data)
-    return new_images_data
-
-
 for location in locations:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
@@ -118,7 +118,7 @@ for location in locations:
     product = response.json()[0]
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-    pprint.pprint(source_product['images'])
+    pprint.pprint(source_product)
     time.sleep(2)
     break
 
@@ -139,12 +139,15 @@ for location in locations[1:]:
     product['name'] = source_product['name']
     product['short_description'] = source_product['short_description']
     product['description'] = source_product['description']
-    #del product['images']
-    #product['images'] = source_product['images']
+    del product['images']
+    #src_list = [img['src'] for img in source_images]
+    product['images'] = source_product['images']
     city = location.city
     phone = location.phone
     print("Setting source product title",product['name'], " on ", location.city)
-    #print("city",city)
+    print("source images",source_product['images'])
+    print()
+    print("current images",product['images'])
     #print("phone",phone)
     #time.sleep(3)
     #pprint.pprint(product)
@@ -152,5 +155,7 @@ for location in locations[1:]:
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
-    #pprint.pprint(product)
+    # pprint.pprint(product)
+    break
+
 
