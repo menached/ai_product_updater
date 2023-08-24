@@ -122,14 +122,6 @@ for location in locations:
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
     
-    # # Generate two new image URLs
-    # new_image_url1 = generate("Picture of a cat")
-    # new_image_url2 = generate("Picture of a dog")
-    
-    # # Add the new image URLs to the product['images'] array
-    # product['images'].append({'src': new_image_url1, 'name': 'new-image-1'})
-    # product['images'].append({'src': new_image_url2, 'name': 'new-image-2'})
-
     pprint.pprint(product['images'])
     time.sleep(1)
     break
