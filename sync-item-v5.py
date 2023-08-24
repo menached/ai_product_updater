@@ -164,10 +164,6 @@ for location in locations:
     break
 
 
-
-
-
-
 for location in locations[1:]:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
@@ -204,7 +200,6 @@ for location in locations[1:]:
     new_image_url2 = generate("Picture of a happy girl smoking a joint")
     new_image_url3 = generate("Picture of a super stoned happy face!")
    
-    watermark_text = city + ' Doap'
     # add_watermark(new_image_url1, watermark_text)
     # add_watermark(new_image_url2, watermark_text)
     # add_watermark(new_image_url3, watermark_text)
@@ -224,45 +219,18 @@ for location in locations[1:]:
     # product['short_description'] = new_short_description
     # product['short_description'] = source_product['short_description']
     product['description'] = source_product['description']
-    del product['button_text']
-    del product['sold_individually']
-    del product['stock_quantity']
-    del product['tax_class']
-    del product['tax_status']
-    del product['total_sales']
-    del product['weight']
-    del product['meta_data']
-    del product['rating_count']
-    del product['purchase_note']
-    del product['shipping_class_id']
-    del product['shipping_required']
-    del product['shipping_taxable']
     product['date_created'] = source_product['date_created']
     product['date_created_gmt'] = source_product['date_created_gmt']
     product['date_modified_gmt'] = source_product['date_modified_gmt']
     product['date_modified'] = source_product['date_modified']
-    del product['date_on_sale_from']
-    del product['date_on_sale_from_gmt']
-    del product['date_on_sale_to']
-    del product['date_on_sale_to_gmt']
-    del product['shipping_class']
-    del product['default_attributes']
-    del product['dimensions']
-    del product['download_expiry']
-    del product['download_limit']
-    del product['downloadable']
-    del product['downloads']
-    del product['external_url']
-    del product['grouped_products']
-    del product['has_options']
     city = location.city
     phone = location.phone
     print("Processing: ",city)
     time.sleep(1)
     print("Setting source product title",product['name'], " on ", location.city)
-    print("source images",source_product['images'])
-    print()
-    print("current images",product['images'])
+    # print("source images",source_product['images'])
+    # print()
+    # print("current images",product['images'])
     #print("phone",phone)
     #time.sleep(3)
     #pprint.pprint(product)
@@ -272,5 +240,5 @@ for location in locations[1:]:
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
     # pprint.pprint(product)
-    break
+    #break
     # time.sleep(30)
