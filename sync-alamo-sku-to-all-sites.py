@@ -93,106 +93,51 @@ with open(creds_file_path) as f:
     if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
         locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
 
-# Print the locations
 for location in locations:
-    print("Using " + location.website + " as source product." + sku)
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
+    consumer_key = location.website + "_consumer_key:" + location.consumer_key
+    consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
+
+    auth = (
+     location.consumer_key,
+     location.consumer_secret,
+           )
+    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
+    response.raise_for_status()
+
+    product = response.json()[0]
+    source_product = product
+    pprint.pprint(source_product)
+    time.sleep(2)
+    break
+
+
+
+for location in locations[1:]:
+    base_url = "https://" + location.website + "/wp-json/wc/v3/products"
+    consumer_key = location.website + "_consumer_key:" + location.consumer_key
+    consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
+    print(base_url)
+    auth = (
+     location.consumer_key,
+     location.consumer_secret,
+           )
+    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
+    response.raise_for_status()
+    product = response.json()[0]
+    product['name'] = source_product['name']
+    product['short_description'] = source_product['short_description']
+    product['description'] = source_product['description']
     city = location.city
     phone = location.phone
-    consumer_key = location.website + "_consumer_key:" + location.consumer_key
-    consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
-
-    auth = (
-     location.consumer_key,
-     location.consumer_secret,
-           )
-    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
-    response.raise_for_status()
-
-    if not response.json():
-        print(f"No product found with SKU: {sku}")
-        exit()
-
-    product = response.json()[0]
-
-    #time.sleep(1)
-    # pprint.pprint(product)
-    print("Source site: ", location.website)
-    print("Product to clone: ", product['sku'], "Name: ", product['name']) 
-    print()
-    break    
-
-time.sleep(1)
-print("Turn AI loose...")
-for location in locations[1:]:
-    print("Using " + location.website + " as source product." + sku)
-    base_url = "https://" + location.website + "/wp-json/wc/v3/products"
-    consumer_key = location.website + "_consumer_key:" + location.consumer_key
-    consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
-
-    auth = (
-     location.consumer_key,
-     location.consumer_secret,
-           )
-
-    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
-    response.raise_for_status()
-
-    if not response.json():
-        print(f"No product found with SKU: {sku}")
-        exit()
-
-    product = response.json()[0]
-
-    sku = product['sku']
-    city = location.city
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages = [
-            {
-                "role": "system",
-                "content": "You are a helpful budtender who knows all about the cannabis industry in Northern California. ",
-                },
-            {
-                "role": "user",
-                "content": f"I have a product with SKU '{sku}' named '{product['name']}' with a short description of '{product['short_description']}'."
-                f"I need a new but similar name for this product that will both help with SEO and improve the product visibility in search engines."
-                f"Use the city name '{city}' in the title. Examples of really good usage would be variations of things like Best in Burlingame or San Ramons best. "
-                f"Don't stray too far from the core idea of the original name.  Add the city name to the product title somehow. "
-                f"Limit the new product name to about 70 characters.  Do not use any punctuation or apostrophes or any single or double quotes. "
-                f"Use proper capitalization. Optimize all for SEO.  Never use prices in the new titles."
-                },
-            ]
-        )
-
-    new_product_name = response['choices'][0]['message']['content'].strip()
-    new_product_name = html.unescape(re.sub('<.*?>', '', new_product_name))
-    print("Suggested new product name: ", new_product_name)
-    product['name'] = new_product_name
-
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages = [
-            {
-                "role": "system",
-                "content": "You are a helpful budtender who knows all about the cannabis industry in and around the city of '{city}'. ",
-                },
-            {
-                "role": "user",
-                "content": f"I am a budtender looking to deliver cannabis products to my customers. "
-                f"Create a list of 5 possible public meetup spots in the area of '{city}' that can be used as meetup spots if the customer doesnt want to meet at home or work. Prioritize discreet and easy access."
-                f"The locations should be convenient, well known, and not near a school or police station. Present them as a bullet list with short descriptions as to why they are good meetup spots."
-                },
-            ]
-        )
-    
-    meetup_spots = response['choices'][0]['message']['content'].strip()
-    meetup_spots = html.unescape(re.sub('<.*?>', '', meetup_spots))
-    product['description'] = product['description'] + " \n\n  Have your " + new_product_name +  " delivered to your home or work or choose one of these great meetup spots in " + city + "\n" +  meetup_spots
-    #print("Suggested meetups spots for ",city,": ", meetup_spots)
-    #print("New product description", product['description'])
+    print("Setting source product title",product['name'], " on ", location.city)
+    #print("city",city)
+    #print("phone",phone)
+    #time.sleep(3)
+    #pprint.pprint(product)
+    #time.sleep(3)
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
-    break
+    #pprint.pprint(product)
 

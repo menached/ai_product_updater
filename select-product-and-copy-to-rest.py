@@ -93,12 +93,8 @@ with open(creds_file_path) as f:
     if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
         locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
 
-# Print the locations
 for location in locations:
-    print("Use " + location.website + " to get source product." + sku)
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
-    city = location.city
-    phone = location.phone
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
     consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
 
@@ -109,88 +105,39 @@ for location in locations:
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
 
-    if not response.json():
-        print(f"No product found with SKU: {sku}")
-        exit()
-
     product = response.json()[0]
-
-    time.sleep(1)
-    # pprint.pprint(product)
-    print("Source site: ", location.website)
-    print("Product to clone: ", product['sku'], "Name: ", product['name']) 
-    print()
-    break    
-
-time.sleep(1)
-print("Turn AI loose...")
-for location in locations[1:]:
-    sku = product['sku']
-    print("City:",location.city)
-    print("AUTH:",auth)
-    print("sku:",sku)
-    response = openai.ChatCompletion.create(
-        # model="gpt-3.5-turbo",
-        model="gpt-3.5-turbo",
-        messages = [
-            {
-                "role": "system",
-                "content": "You are a helpful budtender who knows all about the cannabis industry.",
-                },
-            {
-                "role": "user",
-                "content": f"I have a product with SKU '{sku}' named '{product['name']}' with a short description of '{product['short_description']}' and a long description of '{product['description']}'. "
-                f"I need a new but similar name for this product that will both help with SEO and improve the product visibility in search engines. "
-                f"Don't stray too far from the core idea of the original name.  Use the word Doap as an acronym for awesome. "
-                f"Limit the new product name to about 70 characters.  Do not use any punctuation or apostrophes or single or double quotes. "
-                f"Use proper capitalization. Optimize all for SEO.  Never use prices in the new titles."
-                f"Never spell the word dope, always substitute doap. Dont use the phone number in the title."
-                },
-            ]
-        )
-    pprint.pprint(response)
-    time.sleep(4)
-    new_product_name = response['choices'][0]['message']['content'].strip()
-    new_product_name = html.unescape(re.sub('<.*?>', '', new_product_name))
-    print("Suggested new product name: ", new_product_name)
-    print("Suggested new product name: ", new_product_name)
-    print("Suggested new product name: ", new_product_name)
-    print("Suggested new product name: ", new_product_name)
+    source_product = product
+    pprint.pprint(source_product)
     time.sleep(2)
-    print()
-time.sleep(1)
+    break
+
+
 
 for location in locations[1:]:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
-    city = location.city
-    phone = location.phone
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
     consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
-
+    print(base_url)
     auth = (
      location.consumer_key,
      location.consumer_secret,
            )
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
-
     product = response.json()[0]
-
-    time.sleep(1)
-    print("Generate localiezed product data for: ", location.website, " Sku: ", product['sku'], "Name: ", product['name'])
-    print("Step 1 Update certain elements of Sku:", product['sku'], " Name: ", product['name'], " with AI")
-    print("update description and short description to use the local area name, local phone, and local landmarks for a meetup")
-    print("get busy!")
-    print("update pictures 2-10 with AI generated + good meta data")
-    print("get busy!")
-    print("make sure the featured image is selected by us on the source site Alamo.")
-    print("get busy!")
-    print("Run product update commands (currently commented)...")
-    #pprint.pprint (product)
-# Update the product with the new name
+    product['name'] = source_product['name']
+    product['short_description'] = source_product['short_description']
+    product['description'] = source_product['description']
+    city = location.city
+    phone = location.phone
+    print("Setting source product title",product['name'], " on ", location.city)
+    #print("city",city)
+    #print("phone",phone)
+    #time.sleep(3)
+    #pprint.pprint(product)
+    #time.sleep(3)
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
-    time.sleep(1)
-    pprint.pprint(product)
+    #pprint.pprint(product)
     break
