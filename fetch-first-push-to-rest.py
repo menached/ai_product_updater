@@ -137,22 +137,20 @@ for location in locations[1:]:
             {
                 "role": "user",
                 "content": f"I have a product with SKU '{sku}' named '{product['name']}' with a short description of '{product['short_description']}'."
-                f"I need a new but similar name for this product that will both help with SEO and improve the product visibility in search engines. "
+                f"I need a new but similar name for this product that will both help with SEO and improve the product visibility in search engines and uses the city name in the title. "
                 f"Don't stray too far from the core idea of the original name.  Add the city name to the product title somehow. "
                 f"Limit the new product name to about 70 characters.  Do not use any punctuation or apostrophes or any single or double quotes. "
                 f"Use proper capitalization. Optimize all for SEO.  Never use prices in the new titles."
                 },
             ]
         )
-    pprint.pprint(response)
-    #time.sleep(4)
+
     new_product_name = response['choices'][0]['message']['content'].strip()
     new_product_name = html.unescape(re.sub('<.*?>', '', new_product_name))
     print("Suggested new product name: ", new_product_name)
-
+    product['name'] = new_product_name
 
     response = openai.ChatCompletion.create(
-        # model="gpt-3.5-turbo",
         model="gpt-3.5-turbo",
         messages = [
             {
@@ -163,50 +161,23 @@ for location in locations[1:]:
                 "role": "user",
                 "content": f"I am a budtender looking to deliver cannabis products to my customers. "
                 f"Create a list of 5 possible public meetup spots in the area of '{city}' that can be used as meetup spots if the customer doesnt want to meet at home or work. "
-                f"The locations should be convenient, well known, and not near a school or police station."
+                f"The locations should be convenient, well known, and not near a school or police station. Do not add any other text besides the list of locations."
                 },
             ]
         )
-    pprint.pprint(response)
-    #time.sleep(4)
+    
     meetup_spots = response['choices'][0]['message']['content'].strip()
     meetup_spots = html.unescape(re.sub('<.*?>', '', meetup_spots))
+    product['description'] = product['description'] + " \n " + new_product_name
     print("Suggested meetups spots for ",city,": ", meetup_spots)
 
+    # print("update pictures 2-10 with AI generated + good meta data")
+    # print("Run product update commands. ")
 
-
-for location in locations[1:]:
-    base_url = "https://" + location.website + "/wp-json/wc/v3/products"
-    city = location.city
-    phone = location.phone
-    consumer_key = location.website + "_consumer_key:" + location.consumer_key
-    consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
-
-    auth = (
-     location.consumer_key,
-     location.consumer_secret,
-           )
-    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
-    response.raise_for_status()
-
-    product = response.json()[0]
-
-    time.sleep(1)
-    print("Generate localiezed product data for: ", location.website, " Sku: ", product['sku'], "Name: ", product['name'])
-    print("Step 1 Update certain elements of Sku:", product['sku'], " Name: ", product['name'], " with AI")
-    print("update description and short description to use the local area name, local phone, and local landmarks for a meetup")
-    print("get busy!")
-    print("update pictures 2-10 with AI generated + good meta data")
-    print("get busy!")
-    print("make sure the featured image is selected by us on the source site Alamo.")
-    print("get busy!")
-    print("Run product update commands (currently commented)...")
-    #pprint.pprint (product)
-# Update the product with the new name
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
-    time.sleep(1)
-    pprint.pprint(product)
+    #time.sleep(1)
+    #pprint.pprint(product)
     break
 
