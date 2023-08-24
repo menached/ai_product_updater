@@ -86,7 +86,6 @@ with open(creds_file_path) as f:
 
     if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
         locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
-
 def generate(new_pics_prompt):
     res = openai.Image.create(
         prompt=new_pics_prompt,
@@ -94,6 +93,7 @@ def generate(new_pics_prompt):
         size="256x256",
     )
     return res["data"][0]["url"]
+
 
 
 def remove_keys(images_data):
@@ -105,16 +105,16 @@ def remove_keys(images_data):
     return new_images_data
 
 
+
 for location in locations:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
     consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
 
     auth = (
-     location.consumer_key,
-     location.consumer_secret,
-           )
-
+        location.consumer_key,
+        location.consumer_secret,
+    )
 
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
@@ -122,7 +122,16 @@ for location in locations:
     product = response.json()[0]
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-    pprint.pprint(source_product['images'])
+    
+    # Generate two new image URLs
+    new_image_url1 = generate("Picture of a cat")
+    new_image_url2 = generate("Picture of a dog")
+    
+    # Add the new image URLs to the product['images'] array
+    product['images'].append({'src': new_image_url1, 'name': 'new-image-1'})
+    product['images'].append({'src': new_image_url2, 'name': 'new-image-2'})
+
+    pprint.pprint(product['images'])
     time.sleep(1)
     break
 
@@ -234,4 +243,5 @@ for location in locations[1:]:
     # pprint.pprint(product)
     break
     # time.sleep(30)
+
 
