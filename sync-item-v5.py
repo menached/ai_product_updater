@@ -166,29 +166,15 @@ for location in locations[1:]:
     del product['images']
     product['images'] = source_product['images']
 
-    # new_pic_prompts = [
-                        # f"Create a picture of this cannabis product: '{product['name']}'.", 
-                        # f"Create a picture of a very pretty girl delivering a tiny package to a handsome guy."
-                       # ]
-    # new_image_urls = [generate(prompt) for prompt in new_pic_prompts]
-    
     # Generate two new image URLs
-    new_image_url1 = generate("Picture of a cow")
-    new_image_url2 = generate("Picture of a snake")
+    new_image_url1 = generate("Picture of a happy guy with a vape")
+    new_image_url2 = generate("Picture of a happy girl smoking a joint")
+    new_image_url3 = generate("Picture of a super stoned happy face!")
     
     # Add the new image URLs to the product['images'] array
-    product['images'].append({'src': new_image_url1, 'name': 'new-image-1'})
-    product['images'].append({'src': new_image_url2, 'name': 'new-image-2'})
-
-
-    # for i, image in enumerate(product['images']):
-        # if i < len(new_image_urls):
-            # old_image_url = image['src']
-            # image['src'] = new_image_urls[i]
-            # print(f"Old Image URL: {old_image_url}")
-            # print(f"New Image URL: {image['src']}\n")
-        # else:
-            # break
+    product['images'].append({'src': new_image_url1, 'name': 'Super happy stoner guy loves his vape!'})
+    product['images'].append({'src': new_image_url2, 'name': 'Supewr happy stoner girl loves her joint!'})
+    product['images'].append({'src': new_image_url3, 'name': 'Super Doap Stoney Cartoon Happy Face!'})
 
 
     new_short_description = source_product['short_description'] + " Get 1hr delivery bo calling  " + city.strip('"') + " Doap at " + phone.strip('"') + " anytime between 9-9 daily 7 days a week. We deliver to " + city.strip('"') + " and surrounding cities!" 
