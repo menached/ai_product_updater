@@ -112,6 +112,8 @@ for location in locations:
      location.consumer_key,
      location.consumer_secret,
            )
+
+
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
 
@@ -119,7 +121,7 @@ for location in locations:
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
     pprint.pprint(source_product['images'])
-    time.sleep(2)
+    time.sleep(10)
     break
 
 
@@ -128,7 +130,6 @@ for location in locations[1:]:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
     consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
-    print(base_url)
     auth = (
      location.consumer_key,
      location.consumer_secret,
@@ -136,14 +137,28 @@ for location in locations[1:]:
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
     product = response.json()[0]
+    # for image in product['images']:
+        # image_url = image['src']
+        # image_id = image['id']
+        # delete_url = f'{base_url}/{product["id"]}/images/{image_id}'
+        # delete_response = requests.delete(delete_url, auth=auth)
+        # delete_response.raise_for_status()
+        # print("Deleted image:", image_url)
+
+    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
+    response.raise_for_status()
+    product = response.json()[0]
     product['name'] = source_product['name']
     product['short_description'] = source_product['short_description']
     product['description'] = source_product['description']
-    #del product['images']
-    #product['images'] = source_product['images']
+    del product['images']
+    product['images'] = source_product['images']
     city = location.city
     phone = location.phone
-    print("Setting source product title",product['name'], " on ", location.city)
+    print("Source title:\n",source_product['name'])
+    print("Dest title: \n", product['name'])
+    print("Source images:\n",source_product['images'])
+    print("Dest images: \n", product['images'])
     #print("city",city)
     #print("phone",phone)
     #time.sleep(3)
