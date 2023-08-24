@@ -123,10 +123,12 @@ for location in locations:
     break    
 
 time.sleep(1)
-print("Turn AI loose on these sites...")
+print("Turn AI loose...")
 for location in locations[1:]:
-    print(location.city)
     sku = product['sku']
+    print("City:",location.city)
+    print("AUTH:",auth)
+    print("sku:",sku)
     response = openai.ChatCompletion.create(
         # model="gpt-3.5-turbo",
         model="gpt-3.5-turbo",
@@ -146,7 +148,8 @@ for location in locations[1:]:
                 },
             ]
         )
-
+    pprint.pprint(response)
+    time.sleep(4)
     new_product_name = response['choices'][0]['message']['content'].strip()
     new_product_name = html.unescape(re.sub('<.*?>', '', new_product_name))
     print("Suggested new product name: ", new_product_name)
