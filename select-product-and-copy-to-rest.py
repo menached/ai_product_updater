@@ -117,18 +117,19 @@ for location in locations:
 
     time.sleep(1)
     # pprint.pprint(product)
-    print("Source Item")
-    print("From ", location)
-    print(product['sku'])
-    print(product['name'])
-    time.sleep(1)
+    print("Source site: ", location.website)
+    print("Product to clone: ", product['sku'], "Name: ", product['name']) 
+    print()
     break    
 
-# Print the locations
+time.sleep(1)
+print("Turn AI loose on these sites...")
 for location in locations[1:]:
-    print("Target Area: ", location )
-    time.sleep(1)
+    print(location.city)
     print()
+time.sleep(1)
+
+for location in locations[1:]:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     city = location.city
     phone = location.phone
@@ -142,15 +143,23 @@ for location in locations[1:]:
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
 
-    if not response.json():
-        print(f"No product found with SKU: {sku}")
-        exit()
-
     product = response.json()[0]
 
     time.sleep(1)
-    print("Destination Item")
-    print("From ", location)
-    print(product['sku'])
-    print(product['name'])
-    # pprint.pprint(product)
+    print("Generate localiezed product data for: ", location.website, " Sku: ", product['sku'], "Name: ", product['name'])
+    print("Step 1 Update certain elements of Sku:", product['sku'], " Name: ", product['name'], " with AI")
+    print("update description and short description to use the local area name, local phone, and local landmarks for a meetup")
+    print("get busy!")
+    print("update pictures 2-10 with AI generated + good meta data")
+    print("get busy!")
+    print("make sure the featured image is selected by us on the source site Alamo.")
+    print("get busy!")
+    print("Run product update commands (currently commented)...")
+    #pprint.pprint (product)
+# Update the product with the new name
+    update_url = f'{base_url}/{product["id"]}'
+    update_response = requests.put(update_url, json=product, auth=auth)
+    update_response.raise_for_status()
+    time.sleep(1)
+    pprint.pprint(product)
+    break
