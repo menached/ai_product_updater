@@ -149,9 +149,7 @@ def add_watermark(image_url, watermark_text):
 
 
 #fetches the first product dataset to be edited and pushed to the other sites.
-pdb.set_trace()
 for location in locations:
-    pdb.set_trace()
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
     consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
@@ -176,9 +174,7 @@ for location in locations:
     break
 
 #fetches all but the first product and applies the updated first site product details.
-pdb.set_trace()
 for location in locations[1:]:
-    pdb.set_trace()
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
     consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
@@ -186,39 +182,29 @@ for location in locations[1:]:
      location.consumer_key,
      location.consumer_secret,
            )
-    pdb.set_trace()
     opkey = openai.api_key
     city = location.city
     phone = location.phone
     website = location.website
-    pdb.set_trace()
 
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
-    pdb.set_trace()
     product = response.json()[0]
-    pdb.set_trace()
-    print("Add stuff to mix up name here.")
     product['name'] = source_product['name']
     print("Add stuff to mix up name here.")
     
-    pdb.set_trace()
     image_count = 0
 # Update the product images with the new image
     for image in product['images']:
-        pdb.set_trace()
         image_count = image_count + 1
         del image['id']
-        pdb.set_trace()
         del image['date_created']
-        pdb.set_trace()
         del image['date_created_gmt']
-        pdb.set_trace()
         del image['date_modified']
-        pdb.set_trace()
         del image['date_modified_gmt']
-        pdb.set_trace()
+    pdb.set_trace()
     print("Pre-existing image count", image_count)
+    pdb.set_trace()
     del product['images']
     pdb.set_trace()
     product['images'] = source_product['images']
