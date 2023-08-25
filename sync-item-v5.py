@@ -10,6 +10,7 @@ import math
 import glob
 import pprint
 import nltk
+import pdb
 import requests
 import time
 import random
@@ -91,19 +92,24 @@ with open(creds_file_path) as f:
     if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
         locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
 
+pdb.set_trace()
 def generate(new_pics_prompt):
     res = openai.Image.create(
         prompt=new_pics_prompt,
         n=1,
         size="1024x1024",
     )
+    pdb.set_trace()
     return res["data"][0]["url"]
 
 def remove_keys(images_data):
     keys_to_remove = ['date_created', 'date_created_gmt', 'date_modified', 'date_modified_gmt', 'id', 'alt']
     new_images_data = []
-    for image_data in images_data:
-        new_image_data = {key: value for key, value in image_data.items() if key not in keys_to_remove}
+    for index, image_data in enumerate(images_data):
+        if index < 4:
+            new_image_data = {key: value for key, value in image_data.items() if key not in keys_to_remove}
+        else:
+            new_image_data = {}
         new_images_data.append(new_image_data)
     return new_images_data
 
@@ -141,7 +147,7 @@ def add_watermark(image_url, watermark_text):
         print(f"Error adding watermark to image: {str(e)}")
 
 
-
+#fetches the first product dataset to be edited and pushed to the other sites.
 for location in locations:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
@@ -163,8 +169,8 @@ for location in locations:
     time.sleep(1)
     break
 
-
-for location in locations[1:]:
+#fetches all but the first product and applies the updated first site product details.
+for location in locations[3:]:
     base_url = "https://" + location.website + "/wp-json/wc/v3/products"
     consumer_key = location.website + "_consumer_key:" + location.consumer_key
     consumer_secret = location.website + "_consumer_secret:" + location.consumer_secret
@@ -191,7 +197,7 @@ for location in locations[1:]:
         del image['date_created_gmt']
         del image['date_modified']
         del image['date_modified_gmt']
-    print("Image count", image_count)
+    print("Pre-existing image count", image_count)
     del product['images']
     product['images'] = source_product['images']
 
@@ -231,7 +237,7 @@ for location in locations[1:]:
     # print("source images",source_product['images'])
     # print()
     # print("current images",product['images'])
-    #print("phone",phone)
+    print("City",city)
     #time.sleep(3)
     #pprint.pprint(product)
     #pprint.pprint(product)
