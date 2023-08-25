@@ -99,7 +99,7 @@ def generate(new_pics_prompt):
     res = openai.Image.create(
         prompt=new_pics_prompt,
         n=1,
-        size="1024x1024",
+        size="256x256",
     )
     return res["data"][0]["url"]
 
@@ -202,15 +202,15 @@ for location in locations[1:]:
     product['images'] = source_product['images']
     for image in product['images']:
         image_count = image_count + 1
-    # Generate three new image URLs
+    
+    # Generate new image URLs
+    # Add them new image URLs to the product['images'] array
     new_image_url1 = generate("Picture of a happy guy with a vape")
-    new_image_url2 = generate("Picture of a happy girl smoking a joint")
-    new_image_url3 = generate("Picture of a super stoned happy face!")
-
-    # Add the new image URLs to the product['images'] array
     product['images'].append({'src': new_image_url1, 'name': 'Happy guy with a vape.'})
-    product['images'].append({'src': new_image_url2, 'name': 'Happy girl smoking a joint.'})
-    product['images'].append({'src': new_image_url3, 'name': 'Super stoned happy face.'})
+    # new_image_url2 = generate("Picture of a happy girl smoking a joint")
+    # product['images'].append({'src': new_image_url2, 'name': 'Happy girl smoking a joint.'})
+    # new_image_url3 = generate("Picture of a super stoned happy face!")
+    # product['images'].append({'src': new_image_url3, 'name': 'Super stoned happy face.'})
 
     new_short_description = source_product['short_description'] + " Get 1hr delivery bo calling  " + city.strip('"') + " Doap at " + phone.strip('"') + " anytime between 9-9 daily 7 days a week. We deliver to " + city.strip('"') + " and surrounding cities!" 
     new_short_description = new_short_description.replace("Alamo", city.strip('"'))
@@ -250,11 +250,39 @@ for location in locations[1:]:
     del product['shipping_taxable']
     del product['type']
     del product['reviews_allowed']
+    del product['related_ids']
+    del product['price_html']
+    del product['parent_id']
     del product['shipping_class']
     del product['shipping_class_id']
     del product['status']
     del product['purchase_note']
     del product['purchasable']
+    del product['meta_data']
+    del product['low_stock_amount']
+    del product['manage_stock']
+    del product['menu_order']
+    del product['dimensions']
+    del product['download_expiry']
+    del product['download_limit']
+    del product['downloadable']
+    del product['downloads']
+    del product['external_url']
+    del product['has_options']
+    del product['grouped_products']
+    del product['attributes']
+    del product['average_rating']
+    del product['backordered']
+    del product['backorders']
+    del product['backorders_allowed']
+    del product['button_text']
+    del product['catalog_visibility']
+    del product['cross_sell_ids']
+    del product['date_on_sale_from']
+    del product['date_on_sale_from_gmt']
+    del product['date_on_sale_to']
+    del product['date_on_sale_to_gmt']
+    del product['default_attributes']
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
