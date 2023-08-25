@@ -34,7 +34,6 @@ creds_file_path = os.path.join(
 if os.path.exists('product.json'):
     os.remove('product.json')
 
-# Define a class to represent a location
 class Location:
     def __init__(self, website, user, city, phone, consumer_key, consumer_secret, api_key):
         self.website = website
@@ -57,22 +56,25 @@ with open(creds_file_path) as f:
     consumer_key = None
     consumer_secret = None
     openai.api_key = None
+    # pdb.set_trace()
     for line in f:
+        # pdb.set_trace()
         line = line.strip()  # Remove trailing and leading whitespace
+        # pdb.set_trace()
         if line.startswith("[") and line.endswith("]"):
+            # pdb.set_trace()
             if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
+                # pdb.set_trace()
                 locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
+                # pdb.set_trace()
             website = line[1:-1].lstrip()  # Remove the brackets and any leading whitespace
+            # pdb.set_trace()
             user = None
             city = None
             phone = None
             consumer_key = None
             consumer_secret = None
             openai.api_key = None
-        elif line.startswith("["):
-            website = line[1:]
-        elif line.endswith("]"):
-            website += line[:-1]
         elif website and " = " in line:
             key, value = line.split(" = ")
             if key == "user":
@@ -90,7 +92,7 @@ with open(creds_file_path) as f:
             elif key == "website":
                 website = value
 
-    
+     
     #if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
     locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
 
@@ -193,21 +195,24 @@ for location in locations[1:]:
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
     product = response.json()[0]
-    product['name'] = "Super duper " + source_product['name'] 
+    product['name'] = source_product['name'] 
     
     del product['date_created']
     del product['date_created_gmt']
     del product['date_modified']
     del product['date_modified_gmt']
+    
+    category_names = [category['name'] for category in product['categories']]
+    category_name = product['categories'][0]['name']
 
-    new_image_url = generate(f"Picture of a happy guy with a vape in {city}")
-    new_images.append({
-        "src": new_image_url,
-        "name": "Image Name",  # Replace with a suitable image name
-    })
+    if len(new_images) <= 6:
+        new_image_url = generate(f"Picture of {category_name}")
+        new_images.append({
+            "src": new_image_url,
+            "name": "Image Name",  # Replace with a suitable image name
+        })
     product['images'] = new_images
     product['images'] = product['images'][:5]
-
 
     new_short_description = source_product['short_description'] + " Get 1hr delivery bo calling  " + city.strip('"') + " Doap at " + phone.strip('"') + " anytime between 9-9 daily 7 days a week. We deliver to " + city.strip('"') + " and surrounding cities!" 
     new_short_description = new_short_description.replace("Alamo", city.strip('"'))
