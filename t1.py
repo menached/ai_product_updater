@@ -89,6 +89,7 @@ with open(creds_file_path) as f:
                 consumer_secret = value
             elif key == "openai.api_key":
                 openai.api_key = value
+                aikey = value
             elif key == "website":
                 website = value
 
@@ -158,6 +159,7 @@ for locationa in locations:
     city = locationa.city
     phone = locationa.phone
     website = locationa.website
+    aikey = openai.api_key
 
     auth = (
         locationa.consumer_key,
@@ -171,22 +173,26 @@ for locationa in locations:
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
 
-    print("Location A Loop")
-    print(website, auth)
+    print("Location A Loop\n", product['name'])
+    print(website, aikey)
     print()
     break
 
 new_images = source_product['images'][:4]  # Copy the first four images from the original product['images'] list
 # pdb.set_trace()
 #fetches all but the first product and applies the updated first site product details.
-print("Location B Loop", product['name'])
+print("Location B Loop\n")
 for locationb in locations[1:]:
     base_url = "https://" + locationb.website + "/wp-json/wc/v3/products"
     consumer_key = locationb.website + "_consumer_key:" + locationb.consumer_key
     consumer_secret = locationb.website + "_consumer_secret:" + locationb.consumer_secret
     city = locationb.city
+    city = city.replace('"', '')
     phone = locationb.phone
+    phone = phone.replace(' ', '').replace('-', '').replace('"', '').replace('(', '').replace(')', '')
+
     website = locationb.website
+    aikey = openai.api_key
 
     auth = (
         locationb.consumer_key,
@@ -199,5 +205,7 @@ for locationb in locations[1:]:
     product = response.json()[0]
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-    print(website, auth)
+    print(website)
+    print(city, phone)
+    print("New name: ", product['name'])
 
