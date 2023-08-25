@@ -248,6 +248,13 @@ for location in locations[1:]:
     del product['rating_count']
     del product['shipping_required']
     del product['shipping_taxable']
+    del product['type']
+    del product['reviews_allowed']
+    del product['shipping_class']
+    del product['shipping_class_id']
+    del product['status']
+    del product['purchase_note']
+    del product['purchasable']
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
