@@ -190,23 +190,28 @@ for location in locations[1:]:
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
     product = response.json()[0]
-    product['name'] = source_product['name']
-    print("Add stuff to mix up name here.")
+    product['name'] = "Super duper " + source_product['name'] 
     
-    image_count = 0
-    del product['images']
+    pdb.set_trace()
+    product['images'] = source_product['images']
+    pdb.set_trace()
+    #del product['images']
     del product['date_created']
     del product['date_created_gmt']
     del product['date_modified']
     del product['date_modified_gmt']
-    product['images'] = source_product['images']
+
+    image_count = 0
     for image in product['images']:
         image_count = image_count + 1
     
     # Generate new image URLs
     # Add them new image URLs to the product['images'] array
+    pdb.set_trace()
     new_image_url1 = generate("Picture of a happy guy with a vape")
+    pdb.set_trace()
     product['images'].append({'src': new_image_url1, 'name': 'Happy guy with a vape.'})
+    pdb.set_trace()
     # new_image_url2 = generate("Picture of a happy girl smoking a joint")
     # product['images'].append({'src': new_image_url2, 'name': 'Happy girl smoking a joint.'})
     # new_image_url3 = generate("Picture of a super stoned happy face!")
@@ -286,6 +291,9 @@ for location in locations[1:]:
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
+    images = product['images']
+    images = images[:3]
+    product['images'] = images
     pdb.set_trace()
     pprint.pprint(product)
     #break
