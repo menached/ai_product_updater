@@ -218,8 +218,12 @@ for location in locations[1:]:
 
     new_description = source_product['description'] + " Get 1hr delivery bo calling  " + city.strip('"') + " Doap at " + phone.strip('"') + " anytime between 9-9 daily 7 days a week. We deliver to " + city.strip('"') + " and surrounding cities!" 
     new_description = new_description.replace("Alamo", city.strip('"'))
-    product['description'] = source_product['description']
+    #product['description'] = new_description
     product['description'] = new_description.replace("925-553-4710", phone.strip('"'))
+    product['date_created'] = source_product['date_created']
+    product['date_created_gmt'] = source_product['date_created_gmt']
+    product['date_modified_gmt'] = source_product['date_modified_gmt']
+    product['date_modified'] = source_product['date_modified']
     city = location.city
     phone = location.phone
     print("Processing: ",city)
@@ -231,6 +235,19 @@ for location in locations[1:]:
     del product['date_created_gmt']
     del product['date_modified']
     del product['date_modified_gmt']
+    del product['tax_class']
+    del product['tax_status']
+    del product['total_sales']
+    del product['weight']
+    del product['virtual']
+    del product['variations']
+    del product['upsell_ids']
+    del product['stock_quantity']
+    del product['stock_status']
+    del product['sold_individually']
+    del product['rating_count']
+    del product['shipping_required']
+    del product['shipping_taxable']
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
