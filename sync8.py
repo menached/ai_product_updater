@@ -174,7 +174,7 @@ for location in locations:
     break
 
 new_images = source_product['images'][:4]  # Copy the first four images from the original product['images'] list
-pdb.set_trace()
+# pdb.set_trace()
 #fetches all but the first product and applies the updated first site product details.
 counter = 0
 for location in locations[1:]:
@@ -284,5 +284,5 @@ for location in locations[1:]:
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
     counter = counter + 1
-    pdb.set_trace()
+    # pdb.set_trace()
     pprint.pprint(product)
