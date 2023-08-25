@@ -201,32 +201,30 @@ for location in locations[1:]:
         # del image['date_created_gmt']
         # del image['date_modified']
         # del image['date_modified_gmt']
-    print("Pre-existing image count", image_count)
-    pdb.set_trace()
+    # print("Pre-existing image count", image_count)
     del product['images']
-    pdb.set_trace()
+    del product['date_created']
+    del product['date_created_gmt']
+    del product['date_modified']
+    del product['date_modified_gmt']
     product['images'] = source_product['images']
     for image in product['images']:
         image_count = image_count + 1
-    pdb.set_trace()
     # Generate three new image URLs
     new_image_url1 = generate("Picture of a happy guy with a vape")
-    # new_image_url2 = generate("Picture of a happy girl smoking a joint")
-    pdb.set_trace()
-    # new_image_url3 = generate("Picture of a super stoned happy face!")
+    new_image_url2 = generate("Picture of a happy girl smoking a joint")
+    new_image_url3 = generate("Picture of a super stoned happy face!")
 
    
     # Add the new image URLs to the product['images'] array
-    product['images'].append({'src': new_image_url1, 'name': 'Super happy stoner guy loves his vape!'})
-    pdb.set_trace()
-    # product['images'].append({'src': new_image_url2, 'name': 'Super happy stoner girl loves her joint!'})
-    # product['images'].append({'src': new_image_url3, 'name': 'Super Doap Stoney Cartoon Happy Face!'})
+    product['images'].append({'src': new_image_url1, 'name': 'Happy guy with a vape.'})
+    product['images'].append({'src': new_image_url2, 'name': 'Happy girl smoking a joint.'})
+    product['images'].append({'src': new_image_url3, 'name': 'Super stoned happy face.'})
 
     new_short_description = source_product['short_description'] + " Get 1hr delivery bo calling  " + city.strip('"') + " Doap at " + phone.strip('"') + " anytime between 9-9 daily 7 days a week. We deliver to " + city.strip('"') + " and surrounding cities!" 
     new_short_description = new_short_description.replace("Alamo", city.strip('"'))
     product['short_description'] = new_short_description.replace("925-553-4710", phone.strip('"'))
 
-    pdb.set_trace()
     # product['name'] = source_product['name']
     # new_short_description = source_product['short_description'].replace('phone', phone)
     # new_short_description = new_short_description.replace('city', city)
@@ -240,16 +238,16 @@ for location in locations[1:]:
     city = location.city
     phone = location.phone
     print("Processing: ",city)
-    time.sleep(1)
     print("Setting source product title",product['name'], " on ", location.city)
     # print("source images",source_product['images'])
     # print()
-    # print("current images",product['images'])
-    print("City",city)
+    print("Images: ",product['images'])
+    print("City: ",city)
     #time.sleep(3)
     #pprint.pprint(product)
     #pprint.pprint(product)
     #time.sleep(3)
+    pdb.set_trace()
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
