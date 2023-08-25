@@ -97,13 +97,13 @@ with open(creds_file_path) as f:
     locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
 
         
-def generate(new_pics_prompt):
-    res = openai.Image.create(
-        prompt=new_pics_prompt,
-        n=1,
-        size="256x256",
-    )
-    return res["data"][0]["url"]
+# def generate(new_pics_prompt):
+    # res = openai.Image.create(
+        # prompt=new_pics_prompt,
+        # n=1,
+        # size="256x256",
+    # )
+    # return res["data"][0]["url"]
 
 def remove_keys(images_data):
     keys_to_remove = ['date_created', 'date_created_gmt', 'date_modified', 'date_modified_gmt', 'id', 'alt']
@@ -205,14 +205,15 @@ for location in locations[1:]:
     category_names = [category['name'] for category in product['categories']]
     category_name = product['categories'][0]['name']
 
-    if len(new_images) <= 6:
-        new_image_url = generate(f"Picture of {category_name}")
-        new_images.append({
-            "src": new_image_url,
-            "name": "Image Name",  # Replace with a suitable image name
-        })
+    # if len(new_images) <= 6:
+        # new_image_url = generate(f"Picture of {category_name}")
+        # new_images.append({
+            # "src": new_image_url,
+            # "name": "Image Name",  # Replace with a suitable image name
+        # })
+    # product['images'] = new_images
+    # product['images'] = source_product['images']
     product['images'] = new_images
-    product['images'] = product['images'][:5]
 
     new_short_description = source_product['short_description'] + " Get 1hr delivery bo calling  " + city.strip('"') + " Doap at " + phone.strip('"') + " anytime between 9-9 daily 7 days a week. We deliver to " + city.strip('"') + " and surrounding cities!" 
     new_short_description = new_short_description.replace("Alamo", city.strip('"'))
