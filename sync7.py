@@ -228,7 +228,7 @@ for location in locations[1:]:
     phone = location.phone
     print("Processing: ",city)
     print("Setting source product title",product['name'], " on ", location.city)
-    print("Images: ",product['images'])
+    #print("Images: ",product['images'])
     print("City: ",city)
     #pprint.pprint(product)
     del product['date_created']
