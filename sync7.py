@@ -194,14 +194,6 @@ for location in locations[1:]:
     print("Add stuff to mix up name here.")
     
     image_count = 0
-# Update the product images with the new image
-    # for image in product['images']:
-        # del image['id']
-        # del image['date_created']
-        # del image['date_created_gmt']
-        # del image['date_modified']
-        # del image['date_modified_gmt']
-    # print("Pre-existing image count", image_count)
     del product['images']
     del product['date_created']
     del product['date_created_gmt']
@@ -215,7 +207,6 @@ for location in locations[1:]:
     new_image_url2 = generate("Picture of a happy girl smoking a joint")
     new_image_url3 = generate("Picture of a super stoned happy face!")
 
-   
     # Add the new image URLs to the product['images'] array
     product['images'].append({'src': new_image_url1, 'name': 'Happy guy with a vape.'})
     product['images'].append({'src': new_image_url2, 'name': 'Happy girl smoking a joint.'})
@@ -225,32 +216,25 @@ for location in locations[1:]:
     new_short_description = new_short_description.replace("Alamo", city.strip('"'))
     product['short_description'] = new_short_description.replace("925-553-4710", phone.strip('"'))
 
-    # product['name'] = source_product['name']
-    # new_short_description = source_product['short_description'].replace('phone', phone)
-    # new_short_description = new_short_description.replace('city', city)
-    # product['short_description'] = new_short_description
-    # product['short_description'] = source_product['short_description']
+    new_description = source_product['description'] + " Get 1hr delivery bo calling  " + city.strip('"') + " Doap at " + phone.strip('"') + " anytime between 9-9 daily 7 days a week. We deliver to " + city.strip('"') + " and surrounding cities!" 
+    new_description = new_description.replace("Alamo", city.strip('"'))
     product['description'] = source_product['description']
-    product['date_created'] = source_product['date_created']
-    product['date_created_gmt'] = source_product['date_created_gmt']
-    product['date_modified_gmt'] = source_product['date_modified_gmt']
-    product['date_modified'] = source_product['date_modified']
+    product['description'] = new_description.replace("925-553-4710", phone.strip('"'))
     city = location.city
     phone = location.phone
     print("Processing: ",city)
     print("Setting source product title",product['name'], " on ", location.city)
-    # print("source images",source_product['images'])
-    # print()
     print("Images: ",product['images'])
     print("City: ",city)
-    #time.sleep(3)
     #pprint.pprint(product)
-    #pprint.pprint(product)
-    #time.sleep(3)
-    pdb.set_trace()
+    del product['date_created']
+    del product['date_created_gmt']
+    del product['date_modified']
+    del product['date_modified_gmt']
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     update_response.raise_for_status()
-    # pprint.pprint(product)
+    pdb.set_trace()
+    pprint.pprint(product)
     #break
     # time.sleep(30)
