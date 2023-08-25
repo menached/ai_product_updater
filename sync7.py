@@ -195,19 +195,19 @@ for location in locations[1:]:
     
     image_count = 0
 # Update the product images with the new image
-    for image in product['images']:
-        image_count = image_count + 1
-        del image['id']
-        del image['date_created']
-        del image['date_created_gmt']
-        del image['date_modified']
-        del image['date_modified_gmt']
-    pdb.set_trace()
+    # for image in product['images']:
+        # del image['id']
+        # del image['date_created']
+        # del image['date_created_gmt']
+        # del image['date_modified']
+        # del image['date_modified_gmt']
     print("Pre-existing image count", image_count)
     pdb.set_trace()
     del product['images']
     pdb.set_trace()
     product['images'] = source_product['images']
+    for image in product['images']:
+        image_count = image_count + 1
     pdb.set_trace()
     # Generate three new image URLs
     new_image_url1 = generate("Picture of a happy guy with a vape")
