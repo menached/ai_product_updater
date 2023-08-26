@@ -77,7 +77,7 @@ def generate_new_image_name(image_name):
             },
             {
                 "role": "user",
-                "content": f"I have an image with the name '{image_name}'. Please suggest a new name for the image."
+                "content": f"I have an image with the name '{image_name}'. Please suggest a new name for the image that does not use dates or times in the name. Limit the name to 70 characters."
             },
         ]
     )
@@ -126,23 +126,47 @@ def add_watermark(image_url, watermark_text):
 
         # Create a drawing object for the image
         draw = ImageDraw.Draw(image)
+        #image.save('path_to_save_image.jpg')
 
+        # Get the dimensions of the image
+        #image_width, image_height = image.size
+
+        # pdb.set_trace()
+        # pdb.set_trace()
         # Define the font and size for the watermark
-        font = ImageFont.truetype('path_to_font.ttf', size=40)
+        font = ImageFont.truetype('font.ttf', size=40)
 
+# Calculate the width and height of the watermark text
+        text_width, text_height = draw.textbbox((0, 0), text=watermark_text, font=font)
+
+# Calculate the position to place the watermark text (centered on the image)
+        image_width, image_height = image.size
+        x = (image_width - text_width) // 2
+        y = (image_height - text_height) // 2
+        
+
+# Apply the watermark by drawing the text on the image
+        draw.text((x, y), text=watermark_text, font=font, fill=(255, 255, 255, 128))
+
+# Save the modified image
+        image.save('path_to_save_image.jpg')
         # Calculate the width and height of the watermark text
-        text_width, text_height = draw.textsize(watermark_text, font=font)
+        #text_width, text_height = draw.textsize(watermark_text, font=font)
+        pdb.set_trace()
 
         # Calculate the position to place the watermark text (centered on the image)
         image_width, image_height = image.size
         x = (image_width - text_width) // 2
         y = (image_height - text_height) // 2
+        pdb.set_trace()
 
         # Apply the watermark by drawing the text on the image
         draw.text((x, y), text=watermark_text, font=font, fill=(255, 255, 255, 128))
+        pdb.set_trace()
 
         # Save the modified image (you can overwrite the original file or save to a new file)
         image.save('path_to_save_image.jpg')
+        pdb.set_trace()
         
     except Exception as e:
         print(f"Error adding watermark to image: {str(e)}")
@@ -249,7 +273,7 @@ for locationa in locations:
 seq = 0
 #fetches all but the first product and applies the updated first site product details.
 print("Destination Products\n")
-for locationb in locations[1:]:
+for locationb in locations[2:]:
     seq = seq + 1
     base_url = "https://" + locationb.website + "/wp-json/wc/v3/products"
     consumer_key = locationb.website + "_consumer_key:" + locationb.consumer_key
@@ -283,9 +307,11 @@ for locationb in locations[1:]:
     print("Sku: ", sku)
     print()
     print("Dest product name")
-    # First AI call: generate new product name
-    # product['name'] = generate_new_product_name(sku).replace('"','')
+   
+   # First AI call: generate new product name
+    ##### product['name'] = generate_new_product_name(sku).replace('"','')
     print(product['name'])
+
     print()
     print("Images")
     print()
@@ -295,17 +321,23 @@ for locationb in locations[1:]:
         itemname = item['name'].replace('-',' ').capitalize()
         print("Image #", imgcnt)
         if  "Screen" in itemname:
-            new_unique_product_name = generate_new_image_name(source_product['name']).replace('"','')
-            print("*", new_unique_product_name)
-            # print("*", itemname)
-        else:
-            # Second. A batch of AI calls that generate new product image names.
-            new_unique_product_name = generate_new_image_name(itemname).replace('"','')
-            item['name'] = new_unique_product_name 
-            # print(itemname)
+            
+            ##### new_unique_product_name = generate_new_image_name(itemname).replace('"','')
+            new_unique_product_name = new_unique_product_name.replace('"','')
+
             print(new_unique_product_name)
-        itemurl = item['src']        
-        print(itemurl)
+            print(item['src'])
+            image_url = item['src']
+            add_watermark(image_url, "Doap.com")
+        else:
+            
+            ##### new_unique_product_name = generate_new_image_name(itemname).replace('"','')
+            new_unique_product_name = itemname
+
+            item['name'] = new_unique_product_name 
+            print(new_unique_product_name)
+            print(item['src'])
+
     #pprint.pprint(source_images)
     break
 
