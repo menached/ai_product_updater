@@ -67,36 +67,26 @@ def generate_new_product_name(sku):
     return new_product_name
 
 
+def generate_new_image_name(image_name):
+    ai_response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a creative AI assistant and California Budtender for a delivery service.",
+            },
+            {
+                "role": "user",
+                "content": f"I have an image with the name '{image_name}'. Please suggest a new name for the image."
+            },
+        ]
+    )
 
-def generate_new_image_names(sku, product_array):
-    # Find the product with the given SKU in the product array
-    product = next((p for p in product_array if p['sku'] == sku), None)
-    if not product:
-        return None
-        
-    new_image_names = []
+    new_image_name = ai_response['choices'][0]['message']['content'].strip()
+    new_image_name = html.unescape(re.sub('<.*?>', '', new_image_name))
 
-    for image in product['images']:
-        ai_response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are a creative AI assistant.",
-                },
-                {
-                    "role": "user",
-                    "content": f"I have an image with the name '{image['name']}'. Please suggest a new name for the image. If the image name uses the word Screen in the title then create a new name using the terms 'Doapest Weed Products'"
-                },
-            ]
-        )
-    
-        new_image_name = ai_response['choices'][0]['message']['content'].strip()
-        new_image_name = html.unescape(re.sub('<.*?>', '', new_image_name))
-        
-        new_image_names.append(new_image_name)
+    return new_image_name
 
-    return new_image_names
 
 
 def remove_keys(images_data):
@@ -296,9 +286,6 @@ for locationb in locations[1:]:
     # First AI call: generate new product name
     # product['name'] = generate_new_product_name(sku).replace('"','')
     print(product['name'])
-    # Second. A batch of AI calls that generate new product image names.
-    #new_pics = generate_new_image_names(sku)
-    #print(new_pics)
     print()
     print("Images")
     print()
@@ -308,11 +295,17 @@ for locationb in locations[1:]:
         itemname = item['name'].replace('-',' ').capitalize()
         print("Image #", imgcnt)
         if  "Screen" in itemname:
-            print("*", itemname)
+            new_unique_product_name = generate_new_image_name(source_product['name']).replace('"','')
+            print("*", new_unique_product_name)
+            # print("*", itemname)
         else:
-            print(itemname)
+            # Second. A batch of AI calls that generate new product image names.
+            new_unique_product_name = generate_new_image_name(itemname).replace('"','')
+            item['name'] = new_unique_product_name 
+            # print(itemname)
+            print(new_unique_product_name)
         itemurl = item['src']        
         print(itemurl)
-    print()
+    #pprint.pprint(source_images)
     break
 
