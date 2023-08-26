@@ -128,8 +128,10 @@ def add_watermark(image_url, watermark_text):
         draw = ImageDraw.Draw(image)
         # Define the font and size for the watermark
         font = ImageFont.truetype('font.ttf', size=40)
+        # Create a temporary drawing object for measuring text size
+        temp_draw = ImageDraw.Draw(Image.new('RGB', (1, 1)))
         # Calculate the position to place the watermark text (centered on the image)
-        text_width, text_height = font.getsize(watermark_text)
+        text_width, text_height = temp_draw.textsize(watermark_text, font=font)
         watermark_width = int(text_width * 1.2)
         watermark_height = int(text_height * 1.2)
         x = (image.width - watermark_width) // 2
@@ -147,6 +149,7 @@ def add_watermark(image_url, watermark_text):
     except Exception as e:
         print(f"Error adding watermark to image: {str(e)}")
         pdb.set_trace()
+
 
 locations = []
 
