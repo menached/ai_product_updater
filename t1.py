@@ -120,31 +120,43 @@ def add_watermark(image_url, watermark_text):
     try:
         response = requests.get(image_url, stream=True)
         response.raise_for_status()
-        image = Image.open(response.raw)
-        image.save('path_to_save_image.png')
-        pdb.set_trace()
-        image = Image.open('path_to_save_image.png')
+
+        # Save the image to a file
+        with open('temporary_image.png', 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+        # Open the image from the file
+        image = Image.open('temporary_image.png')
+
+        # Create a drawing object for the image
+        draw = ImageDraw.Draw(image)
+
         # Define the font and size for the watermark
         font = ImageFont.truetype('font.ttf', size=40)
+
         # Calculate the position to place the watermark text (centered on the image)
-        text_width, text_height = font.getsize(watermark_text)
+        text_width, text_height = draw.textsize(watermark_text, font=font)
         watermark_width = int(text_width * 1.2)
         watermark_height = int(text_height * 1.2)
         x = (image.width - watermark_width) // 2
         y = (image.height - watermark_height) // 2
+
         # Create a transparent background for the watermark text
         watermark = Image.new('RGBA', (watermark_width, watermark_height), (255, 255, 255, 0))
         watermark_draw = ImageDraw.Draw(watermark)
+
         # Apply the watermark text to the transparent background
         watermark_draw.text((0, 0), watermark_text, font=font, fill=(255, 255, 255, 128))
+
         # Paste the watermark onto the image
         image.paste(watermark, (x, y), watermark)
+
         # Save the modified image (you can overwrite the original file or save to a new file)
         image.save('path_to_save_image.png')
 
     except Exception as e:
         print(f"Error adding watermark to image: {str(e)}")
-        pdb.set_trace()
 
 
 locations = []
