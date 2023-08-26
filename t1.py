@@ -115,61 +115,39 @@ def generate(new_pics_prompt):
     )
     return res["data"][0]["url"]
 
+
 def add_watermark(image_url, watermark_text):
     try:
-        # Download the image from the URL
         response = requests.get(image_url, stream=True)
         response.raise_for_status()
-
-        # Open the downloaded image using PIL
         image = Image.open(response.raw)
-
+        image.save('path_to_save_image.png')
+        pdb.set_trace()
+        image = Image.open('path_to_save_image.png')
         # Create a drawing object for the image
         draw = ImageDraw.Draw(image)
-        #image.save('path_to_save_image.jpg')
-
-        # Get the dimensions of the image
-        #image_width, image_height = image.size
-
-        # pdb.set_trace()
-        # pdb.set_trace()
         # Define the font and size for the watermark
         font = ImageFont.truetype('font.ttf', size=40)
-
-# Calculate the width and height of the watermark text
-        text_width, text_height = draw.textbbox((0, 0), text=watermark_text, font=font)
-
-# Calculate the position to place the watermark text (centered on the image)
-        image_width, image_height = image.size
-        x = (image_width - text_width) // 2
-        y = (image_height - text_height) // 2
-        
-
-# Apply the watermark by drawing the text on the image
-        draw.text((x, y), text=watermark_text, font=font, fill=(255, 255, 255, 128))
-
-# Save the modified image
-        image.save('path_to_save_image.jpg')
-        # Calculate the width and height of the watermark text
-        #text_width, text_height = draw.textsize(watermark_text, font=font)
-        pdb.set_trace()
-
         # Calculate the position to place the watermark text (centered on the image)
-        image_width, image_height = image.size
-        x = (image_width - text_width) // 2
-        y = (image_height - text_height) // 2
-        pdb.set_trace()
-
-        # Apply the watermark by drawing the text on the image
-        draw.text((x, y), text=watermark_text, font=font, fill=(255, 255, 255, 128))
-        pdb.set_trace()
-
+        text_width, text_height = draw.textsize(watermark_text, font=font)
+        watermark_width = int(text_width * 1.2)
+        watermark_height = int(text_height * 1.2)
+        x = (image.width - watermark_width) // 2
+        y = (image.height - watermark_height) // 2
+        # Create a transparent background for the watermark text
+        watermark = Image.new('RGBA', (watermark_width, watermark_height), (255, 255, 255, 0))
+        watermark_draw = ImageDraw.Draw(watermark)
+        # Apply the watermark text to the transparent background
+        watermark_draw.text((0, 0), watermark_text, font=font, fill=(255, 255, 255, 128))
+        # Paste the watermark onto the image
+        image.paste(watermark, (x, y), watermark)
         # Save the modified image (you can overwrite the original file or save to a new file)
-        image.save('path_to_save_image.jpg')
-        pdb.set_trace()
-        
+        image.save('path_to_save_image.png')
+
     except Exception as e:
         print(f"Error adding watermark to image: {str(e)}")
+        pdb.set_trace()
+
 
 locations = []
 
