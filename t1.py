@@ -213,20 +213,30 @@ for locationb in locations[1:]:
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
     print()
-    msgg = "#"+ str(sku)
+    msgg = "#" + str(seq) + " " + str(sku)
     print(msgg)
     subdomain = website.split('.')[0]
     print("Domain: ", subdomain)
     print(city, "Doap")
     print(city, " Ca ", phone)
     print("Sku: ", sku)
-    print("Source product name: ")
+    print()
+    print("Source product name")
     print(product['name'])
-    print("Source Image titles: ")
+    print()
+    print("Images")
+    print()
+    imgcnt = 0
     for item in source_images:
+        imgcnt = imgcnt + 1
         itemname = item['name'].replace('-',' ').capitalize()
+        print("Image #", imgcnt)
         if  "Screen" in itemname:
-            print("Modify product name: ", itemname)
+            print("*", itemname)
         else:
             print(itemname)
-    #pprint.pprint(source_images)
+        itemurl = item['src']        
+        print(itemurl)
+        print()
+
+
