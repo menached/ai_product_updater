@@ -44,6 +44,30 @@ class Location:
         self.consumer_secret = consumer_secret
         self.api_key = api_key  # Here's the new attribute
 
+
+def generate_new_product_name(sku):
+    ai_response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful budtender who knows all about the cannabis industry.",
+            },
+            {
+                "role": "user",
+                "content": f"Use this product slug '{product['slug']}' to rewrite the product title. The slug contains words separated by a -."
+            f"Use them to come up with a new name that is max 70 chars long and will rank well with regard to SEO."
+            },
+        ]
+    )
+
+    new_product_name = ai_response['choices'][0]['message']['content'].strip()
+    new_product_name = html.unescape(re.sub('<.*?>', '', new_product_name))
+
+    return new_product_name
+
+
+
 def remove_keys(images_data):
     keys_to_remove = [
     'date_created',
@@ -198,29 +222,8 @@ for locationa in locations:
         print(itemurl)
     break
 
-ai_response = openai.ChatCompletion.create(
-    # model="gpt-3.5-turbo",
-    model="gpt-3.5-turbo",
-    messages = [
-    {
-        "role": "system",
-        "content": "You are a helpful budtender who knows all about the cannabis industry.",
-    },
-    {
-        "role": "user",
-        "content": f"Use this product slug '{product['slug']}' to rewrite the product title.  The slug contains words separated by a -."
-                   f"Use them to come up with a new name that is max 70 chars long and will rank well with regard to SEO."
-    },
-]
-)
-
-new_product_name = ai_response['choices'][0]['message']['content'].strip()
-new_product_name = html.unescape(re.sub('<.*?>', '', new_product_name))
-
-old_product_name = product['name']
-product['name'] = new_product_name
-
-print("New name suggestion: ", new_product_name)
+# new_product_name = generate_new_product_name(sku)
+# print("New name suggestion:", new_product_name)
 
 seq = 0
 #fetches all but the first product and applies the updated first site product details.
@@ -259,6 +262,7 @@ for locationb in locations[1:]:
     print("Sku: ", sku)
     print()
     print("Dest product name")
+    product['name'] = generate_new_product_name(sku)
     print(product['name'])
     print()
     print("Images")
@@ -275,5 +279,5 @@ for locationb in locations[1:]:
         itemurl = item['src']        
         print(itemurl)
     print()
-    break
+    # break
 
