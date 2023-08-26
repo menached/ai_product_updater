@@ -178,16 +178,53 @@ for locationa in locations:
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
 
-    print("Source Product\n", product['name'])
+    source_product_name = product['name'].strip()
+    print("Source Product\n",source_product_name)
     print(website, aikey)
     print()
     source_images = source_product['images'][:4]  
+    print("Source Images")
+    print()
+    imgcnt = 0
+    for item in source_images:
+        imgcnt = imgcnt + 1
+        itemname = item['name'].replace('-',' ').capitalize()
+        print("Image #", imgcnt)
+        if  "Screen" in itemname:
+            print("*", itemname)
+        else:
+            print(itemname)
+        itemurl = item['src']        
+        print(itemurl)
     break
 
+ai_response = openai.ChatCompletion.create(
+    # model="gpt-3.5-turbo",
+    model="gpt-3.5-turbo",
+    messages = [
+    {
+        "role": "system",
+        "content": "You are a helpful budtender who knows all about the cannabis industry.",
+    },
+    {
+        "role": "user",
+        "content": f"Use this product slug '{product['slug']}' to rewrite the product title.  The slug contains words separated by a -."
+                   f"Use them to come up with a new name that is max 70 chars long and will rank well with regard to SEO."
+    },
+]
+)
+
+new_product_name = ai_response['choices'][0]['message']['content'].strip()
+new_product_name = html.unescape(re.sub('<.*?>', '', new_product_name))
+
+old_product_name = product['name']
+product['name'] = new_product_name
+
+print("New name suggestion: ", new_product_name)
 
 seq = 0
 #fetches all but the first product and applies the updated first site product details.
-print("Destination Product\n")
+print("Destination Products\n")
 for locationb in locations[1:]:
     seq = seq + 1
     base_url = "https://" + locationb.website + "/wp-json/wc/v3/products"
@@ -221,7 +258,7 @@ for locationb in locations[1:]:
     print(city, " Ca ", phone)
     print("Sku: ", sku)
     print()
-    print("Source product name")
+    print("Dest product name")
     print(product['name'])
     print()
     print("Images")
@@ -237,6 +274,6 @@ for locationb in locations[1:]:
             print(itemname)
         itemurl = item['src']        
         print(itemurl)
-        print()
-
+    print()
+    break
 
