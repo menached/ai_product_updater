@@ -44,6 +44,64 @@ class Location:
         self.consumer_secret = consumer_secret
         self.api_key = api_key  # Here's the new attribute
 
+def remove_keys(images_data):
+    keys_to_remove = [
+    'date_created',
+    'date_created_gmt',
+    'date_modified',
+    'date_modified_gmt',
+    'id',
+    'alt'
+    ]   
+    new_images_data = []
+    for index, image_data in enumerate(images_data):
+        if index < 4:
+            new_image_data = {key: value for key, value in image_data.items() if key not in keys_to_remove}
+        else:
+            new_image_data = {}
+        new_images_data.append(new_image_data)
+    return new_images_data
+
+def generate(new_pics_prompt):
+    res = openai.Image.create(
+        prompt=new_pics_prompt,
+        n=1,
+        size="256x256",
+    )
+    return res["data"][0]["url"]
+
+def add_watermark(image_url, watermark_text):
+    try:
+        # Download the image from the URL
+        response = requests.get(image_url, stream=True)
+        response.raise_for_status()
+
+        # Open the downloaded image using PIL
+        image = Image.open(response.raw)
+
+        # Create a drawing object for the image
+        draw = ImageDraw.Draw(image)
+
+        # Define the font and size for the watermark
+        font = ImageFont.truetype('path_to_font.ttf', size=40)
+
+        # Calculate the width and height of the watermark text
+        text_width, text_height = draw.textsize(watermark_text, font=font)
+
+        # Calculate the position to place the watermark text (centered on the image)
+        image_width, image_height = image.size
+        x = (image_width - text_width) // 2
+        y = (image_height - text_height) // 2
+
+        # Apply the watermark by drawing the text on the image
+        draw.text((x, y), text=watermark_text, font=font, fill=(255, 255, 255, 128))
+
+        # Save the modified image (you can overwrite the original file or save to a new file)
+        image.save('path_to_save_image.jpg')
+        
+    except Exception as e:
+        print(f"Error adding watermark to image: {str(e)}")
+
 locations = []
 
 # Open the credentials file
@@ -92,65 +150,12 @@ with open(creds_file_path) as f:
                 aikey = value
             elif key == "website":
                 website = value
-
      
-    #if website and user and city and phone and consumer_key and consumer_secret and openai.api_key:
-    locations.append(Location(website, user, city, phone, consumer_key, consumer_secret, openai.api_key))
-
+    locations.append(
+        Location(website, user, city, phone, consumer_key, 
+                 consumer_secret, openai.api_key)
+    )
         
-# def generate(new_pics_prompt):
-    # res = openai.Image.create(
-        # prompt=new_pics_prompt,
-        # n=1,
-        # size="256x256",
-    # )
-    # return res["data"][0]["url"]
-
-def remove_keys(images_data):
-    keys_to_remove = ['date_created', 'date_created_gmt', 'date_modified', 'date_modified_gmt', 'id', 'alt']
-    new_images_data = []
-    for index, image_data in enumerate(images_data):
-        if index < 4:
-            new_image_data = {key: value for key, value in image_data.items() if key not in keys_to_remove}
-        else:
-            new_image_data = {}
-        new_images_data.append(new_image_data)
-    return new_images_data
-
-
-def add_watermark(image_url, watermark_text):
-    try:
-        # Download the image from the URL
-        response = requests.get(image_url, stream=True)
-        response.raise_for_status()
-
-        # Open the downloaded image using PIL
-        image = Image.open(response.raw)
-
-        # Create a drawing object for the image
-        draw = ImageDraw.Draw(image)
-
-        # Define the font and size for the watermark
-        font = ImageFont.truetype('path_to_font.ttf', size=40)
-
-        # Calculate the width and height of the watermark text
-        text_width, text_height = draw.textsize(watermark_text, font=font)
-
-        # Calculate the position to place the watermark text (centered on the image)
-        image_width, image_height = image.size
-        x = (image_width - text_width) // 2
-        y = (image_height - text_height) // 2
-
-        # Apply the watermark by drawing the text on the image
-        draw.text((x, y), text=watermark_text, font=font, fill=(255, 255, 255, 128))
-
-        # Save the modified image (you can overwrite the original file or save to a new file)
-        image.save('path_to_save_image.jpg')
-        
-    except Exception as e:
-        print(f"Error adding watermark to image: {str(e)}")
-
-
 #fetches the first product dataset to be edited and pushed to the other sites.
 for locationa in locations:
     base_url = "https://" + locationa.website + "/wp-json/wc/v3/products"
@@ -173,16 +178,18 @@ for locationa in locations:
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
 
-    print("Location A Loop\n", product['name'])
+    print("Source Product\n", product['name'])
     print(website, aikey)
     print()
+    source_images = source_product['images'][:4]  
     break
 
-new_images = source_product['images'][:4]  # Copy the first four images from the original product['images'] list
-# pdb.set_trace()
+
+seq = 0
 #fetches all but the first product and applies the updated first site product details.
-print("Location B Loop\n")
+print("Destination Product\n")
 for locationb in locations[1:]:
+    seq = seq + 1
     base_url = "https://" + locationb.website + "/wp-json/wc/v3/products"
     consumer_key = locationb.website + "_consumer_key:" + locationb.consumer_key
     consumer_secret = locationb.website + "_consumer_secret:" + locationb.consumer_secret
@@ -205,7 +212,21 @@ for locationb in locations[1:]:
     product = response.json()[0]
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-    print(website)
-    print(city, phone)
-    print("New name: ", product['name'])
-
+    print()
+    msgg = "#"+ str(sku)
+    print(msgg)
+    subdomain = website.split('.')[0]
+    print("Domain: ", subdomain)
+    print(city, "Doap")
+    print(city, " Ca ", phone)
+    print("Sku: ", sku)
+    print("Source product name: ")
+    print(product['name'])
+    print("Source Image titles: ")
+    for item in source_images:
+        itemname = item['name'].replace('-',' ').capitalize()
+        if  "Screen" in itemname:
+            print("Modify product name: ", itemname)
+        else:
+            print(itemname)
+    #pprint.pprint(source_images)
