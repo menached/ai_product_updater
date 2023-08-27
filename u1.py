@@ -172,16 +172,155 @@ with open(creds_file_path) as f:
         
 #fetches the first product dataset to be edited and pushed to the other sites.
 for locationa in locations:
-    print(itemurl)
+        print(itemurl)
+
+
+for locationb in locations[2:]:
+    seq = seq + 1
+    base_url = "https://" + locationb.website + "/wp-json/wc/v3/products"
+    consumer_key = locationb.website + "_consumer_key:" + locationb.consumer_key
+    consumer_secret = locationb.website + "_consumer_secret:" + locationb.consumer_secret
+    city = locationb.city
+    city = city.replace('"', '')
+    phone = locationb.phone
+    phone = phone.replace(' ', '').replace('-', '').replace('"', '').replace('(', '').replace(')', '')
+
+    website = locationb.website
+    aikey = openai.api_key
+
+    auth = (
+        locationb.consumer_key,
+        locationb.consumer_secret,
+    )
+
+    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
+    response.raise_for_status()
+
+    product = response.json()[0]
+    #source_product = product
+    source_product['images'] = remove_keys(source_product['images'])
+    print()
+    msgg = "#" + str(seq) + " " + str(sku)
+    print(msgg)
+    subdomain = website.split('.')[0]
+    print("Domain: ", subdomain)
+    print(city, "Doap")
+    print(city, " Ca ", phone)
+    print("Sku: ", sku)
+    print()
+    print("Dest product name")
+   
+   # First AI call: generate new product name
+    ##### product['name'] = generate_new_product_name(sku).replace('"','')
+    print(product['name'])
+
+    print()
+    print("Images")
+    print()
+    imgcnt = 0
+    for item in source_images:
+        imgcnt = imgcnt + 1
+        itemname = item['name'].replace('-',' ').capitalize()
+        print("Image #", imgcnt)
+        if  "Screen" in itemname:
+            
+            ##### new_unique_product_name = generate_new_image_name(itemname).replace('"','')
+            new_unique_product_name = new_unique_product_name.replace('"','')
+
+            print(new_unique_product_name)
+            print(item['src'])
+            image_url = item['src']
+            # add_watermark(image_url, "Doap.com")
+        else:
+            
+            ##### new_unique_product_name = generate_new_image_name(itemname).replace('"','')
+            new_unique_product_name = itemname
+
+            item['name'] = new_unique_product_name 
+            print(new_unique_product_name)
+            print(item['src'])
+
+    #pprint.pprint(source_images)
+    break
 
 api_url = "https://campbell.doap.com/wp-json/wp/v2/media"
 print()
+print(api_url)
 consumer_key_bits = consumer_key.split(':')
 consumer_key = consumer_key_bits[1]
 consumer_secret_bits = consumer_secret.split(':')
 consumer_secret = consumer_secret_bits[1]
 
-print(api_url)
 print(consumer_key)
 print(consumer_secret) 
 print(sku)
+
+pdb.set_trace()
+# Watermark details
+watermark_text = "Doap"
+font_size = 36  # Adjust as needed
+font_color = (255, 255, 255)  # White color, you can change it as needed
+
+# Retrieve all media items having the given SKU
+params = {
+    'consumer_key': consumer_key,
+    'consumer_secret': consumer_secret,
+    'per_page': 100,  # Increase if needed to retrieve all media items
+    'search': sku,
+}
+
+pdb.set_trace()
+
+response = requests.get(api_url, params=params)
+try:
+    media_items = response.json()
+except requests.exceptions.JSONDecodeError:
+    print(response.content)  # Print the response content for debugging purposes
+    raise
+
+# media_items = response.json()
+
+# Iterate through each media item and add watermark
+for media_item in media_items:
+    image_url = media_item['media_details']['sizes']['full']['source_url']
+    pdb.set_trace()
+
+    # Download the image
+    response = requests.get(image_url)
+    image = Image.open(BytesIO(response.content))
+    pdb.set_trace()
+
+    # Add the watermark text
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.truetype("font.ttf", font_size)  # Use a different font if needed
+    text_width, text_height = draw.textsize(watermark_text, font)
+    x = (image.width - text_width) // 2
+    y = (image.height - text_height) // 2
+    draw.text((x, y), watermark_text, font=font, fill=font_color)
+    pdb.set_trace()
+
+    # Save the watermarked image
+    watermarked_image_path = f"watermarked_{media_item['id']}.jpg"
+    image.save(watermarked_image_path)
+    pdb.set_trace()
+
+    # Upload the watermarked image back to the media item
+    headers = {
+        'Content-Disposition': f'attachment; filename={watermarked_image_path}',
+        'Content-Type': 'image/jpeg',
+    }
+    with open(watermarked_image_path, 'rb') as file:
+        response = requests.post(
+            f"{api_url}/{media_item['id']}/attachments",
+            params={'consumer_key': consumer_key, 'consumer_secret': consumer_secret},
+            headers=headers,
+            data=file.read(),
+        )
+    pdb.set_trace()
+
+    # Remove the temporary watermarked image file
+    os.remove(watermarked_image_path)
+    pdb.set_trace()
+
+
+
