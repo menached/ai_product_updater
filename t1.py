@@ -44,6 +44,20 @@ class Location:
         self.consumer_secret = consumer_secret
         self.api_key = api_key  # Here's the new attribute
 
+
+
+def download_image(url, filename):
+    try:
+        response = requests.get(url, stream=True)
+        response.raise_for_status()
+        with open(filename, "wb") as file:
+            for chunk in response.iter_content(chunk_size=8192):
+                file.write(chunk)
+        print(f"Image downloaded successfully: {filename}")
+    except requests.exceptions.RequestException as e:
+        print(f"Error downloading image: {str(e)}")
+
+
 def add_watermark(filename):
     try:
         # Open the image
@@ -312,6 +326,6 @@ for locationb in locations[2:]:
 
     #pprint.pprint(source_images)
     break
-
+testurl = 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts.jpg'
 add_watermark("temporary_image.png")
 
