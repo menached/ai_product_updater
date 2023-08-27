@@ -44,33 +44,6 @@ class Location:
         self.consumer_secret = consumer_secret
         self.api_key = api_key  # Here's the new attribute
 
-def add_watermark(filename):
-    try:
-        # Open the image
-        image = Image.open(filename).convert("RGBA")
-
-        # Define the watermark text and font style
-        watermark_text = "Watermark"
-        font = ImageFont.truetype("font.ttf", 40)
-
-        # Create a transparent overlay and draw the watermark text
-        overlay = Image.new("RGBA", image.size, (0, 0, 0, 0))
-        draw = ImageDraw.Draw(overlay)
-        text_width, text_height = draw.textbbox((0, 0), watermark_text, font=font)[:2]
-
-        position = ((image.width - text_width) // 2, (image.height - text_height) // 2)
-        draw.text(position, watermark_text, font=font, fill=(128, 128, 128, 128))
-
-        # Composite the image and watermark overlay
-        watermarked = Image.alpha_composite(image, overlay)
-
-        # Save the watermarked image with a new filename
-        watermarked_filename = f"watermarked_{filename}"
-        watermarked.save(watermarked_filename)
-        print(f"Watermarked image saved as {watermarked_filename}")
-    except Exception as e:
-        print(f"Error: {str(e)}")
-
 
 def generate_new_product_name(sku):
     ai_response = openai.ChatCompletion.create(
@@ -199,119 +172,16 @@ with open(creds_file_path) as f:
         
 #fetches the first product dataset to be edited and pushed to the other sites.
 for locationa in locations:
-    base_url = "https://" + locationa.website + "/wp-json/wc/v3/products"
-    consumer_key = locationa.website + "_consumer_key:" + locationa.consumer_key
-    consumer_secret = locationa.website + "_consumer_secret:" + locationa.consumer_secret
-    city = locationa.city
-    phone = locationa.phone
-    website = locationa.website
-    aikey = openai.api_key
+    print(itemurl)
 
-    auth = (
-        locationa.consumer_key,
-        locationa.consumer_secret,
-    )
+api_url = "https://campbell.doap.com/wp-json/wp/v2/media"
+print()
+consumer_key_bits = consumer_key.split(':')
+consumer_key = consumer_key_bits[1]
+consumer_secret_bits = consumer_secret.split(':')
+consumer_secret = consumer_secret_bits[1]
 
-    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
-    response.raise_for_status()
-
-    product = response.json()[0]
-    source_product = product
-    source_product['images'] = remove_keys(source_product['images'])
-
-    source_product_name = product['name'].strip()
-    print("Source Product\n",source_product_name)
-    print(website, aikey)
-    print()
-    source_images = source_product['images'][:4]  
-    print("Source Images")
-    print()
-    imgcnt = 0
-    for item in source_images:
-        imgcnt = imgcnt + 1
-        itemname = item['name'].replace('-',' ').capitalize()
-        print("Image #", imgcnt)
-        if  "Screen" in itemname:
-            print("*", itemname)
-        else:
-            print(itemname)
-        itemurl = item['src']        
-        print(itemurl)
-    break
-
-# new_product_name = generate_new_product_name(sku)
-# print("New name suggestion:", new_product_name)
-
-seq = 0
-#fetches all but the first product and applies the updated first site product details.
-print("Destination Products\n")
-for locationb in locations[2:]:
-    seq = seq + 1
-    base_url = "https://" + locationb.website + "/wp-json/wc/v3/products"
-    consumer_key = locationb.website + "_consumer_key:" + locationb.consumer_key
-    consumer_secret = locationb.website + "_consumer_secret:" + locationb.consumer_secret
-    city = locationb.city
-    city = city.replace('"', '')
-    phone = locationb.phone
-    phone = phone.replace(' ', '').replace('-', '').replace('"', '').replace('(', '').replace(')', '')
-
-    website = locationb.website
-    aikey = openai.api_key
-
-    auth = (
-        locationb.consumer_key,
-        locationb.consumer_secret,
-    )
-
-    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
-    response.raise_for_status()
-
-    product = response.json()[0]
-    #source_product = product
-    source_product['images'] = remove_keys(source_product['images'])
-    print()
-    msgg = "#" + str(seq) + " " + str(sku)
-    print(msgg)
-    subdomain = website.split('.')[0]
-    print("Domain: ", subdomain)
-    print(city, "Doap")
-    print(city, " Ca ", phone)
-    print("Sku: ", sku)
-    print()
-    print("Dest product name")
-   
-   # First AI call: generate new product name
-    ##### product['name'] = generate_new_product_name(sku).replace('"','')
-    print(product['name'])
-
-    print()
-    print("Images")
-    print()
-    imgcnt = 0
-    for item in source_images:
-        imgcnt = imgcnt + 1
-        itemname = item['name'].replace('-',' ').capitalize()
-        print("Image #", imgcnt)
-        if  "Screen" in itemname:
-            
-            ##### new_unique_product_name = generate_new_image_name(itemname).replace('"','')
-            new_unique_product_name = new_unique_product_name.replace('"','')
-
-            print(new_unique_product_name)
-            print(item['src'])
-            image_url = item['src']
-            # add_watermark(image_url, "Doap.com")
-        else:
-            
-            ##### new_unique_product_name = generate_new_image_name(itemname).replace('"','')
-            new_unique_product_name = itemname
-
-            item['name'] = new_unique_product_name 
-            print(new_unique_product_name)
-            print(item['src'])
-
-    #pprint.pprint(source_images)
-    break
-
-add_watermark("temporary_image.png")
-
+print(api_url)
+print(consumer_key)
+print(consumer_secret) 
+print(sku)
