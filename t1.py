@@ -58,6 +58,32 @@ def download_image(url, filename):
         print(f"Error downloading image: {str(e)}")
 
 
+
+def add_watermark_and_save(image_path, watermark_text, output_path):
+    try:
+        # Open the image
+        image = Image.open(image_path).convert("RGBA")
+
+        # Define the watermark text and font style
+        font = ImageFont.truetype("font.ttf", 40)
+
+        # Create a transparent overlay and draw the watermark text
+        overlay = Image.new("RGBA", image.size, (0, 0, 0, 0))
+        draw = ImageDraw.Draw(overlay)
+        text_width, text_height = draw.textbbox((0, 0), watermark_text, font=font)[:2]
+        position = ((image.width - text_width) // 2, (image.height - text_height) // 2)
+        draw.text(position, watermark_text, font=font, fill=(128, 128, 128, 128))
+
+        # Composite the image and watermark overlay
+        watermarked = Image.alpha_composite(image, overlay)
+
+        # Save the watermarked image with the specified output path
+        watermarked.save(output_path)
+        print(f"Watermarked image saved as {output_path}")
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+
 def add_watermark(filename):
     try:
         # Open the image
@@ -326,6 +352,12 @@ for locationb in locations[2:]:
 
     #pprint.pprint(source_images)
     break
-testurl = 'https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts.jpg'
-add_watermark("temporary_image.png")
+image_url = "https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts.jpg"
+image_filename = "temporary_image.png"
+download_image(image_url, image_filename)
+# Apply the watermark and save the image
+watermark_text = subdomain + "Doap.com"
+output_filename = "watermarked_image.png"
+add_watermark_and_save(image_filename, watermark_text, output_filename)
+# add_watermark_and_save("temporary_image.png")
 
