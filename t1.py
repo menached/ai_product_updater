@@ -321,8 +321,8 @@ for locationb in locations[2:]:
     print("Dest product name")
    
    # First AI call: generate new product name
-    ##### product['name'] = generate_new_product_name(sku).replace('"','')
-    print(product['name'])
+    product['name'] = generate_new_product_name(sku).replace('"','')
+    #print(product['name'])
 
     print()
     print("Images")
@@ -333,31 +333,37 @@ for locationb in locations[2:]:
         itemname = item['name'].replace('-',' ').capitalize()
         print("Image #", imgcnt)
         if  "Screen" in itemname:
-            
-            ##### new_unique_product_name = generate_new_image_name(itemname).replace('"','')
             new_unique_product_name = new_unique_product_name.replace('"','')
-
+            new_unique_file_name = new_unique_product_name.replace(" ", "_")
             print(new_unique_product_name)
             print(item['src'])
             image_url = item['src']
-            # add_watermark(image_url, "Doap.com")
+            image_filename = os.path.basename(image_url)
+            download_image(image_url, image_filename)
+            watermark_text = city + " Doap " + phone
+            output_filename = new_unique_file_name + ".png"
+            add_watermark_and_save(image_filename, watermark_text, output_filename)
         else:
-            
-            ##### new_unique_product_name = generate_new_image_name(itemname).replace('"','')
             new_unique_product_name = itemname
-
+            new_unique_file_name = new_unique_product_name.replace(" ", "_")
             item['name'] = new_unique_product_name 
             print(new_unique_product_name)
             print(item['src'])
+            image_url = item['src']
+            image_filename = os.path.basename(image_url)
+            download_image(image_url, image_filename)
+            watermark_text = city + " Doap " + phone
+            output_filename = new_unique_file_name + ".png"
+            add_watermark_and_save(image_filename, watermark_text, output_filename)
 
     #pprint.pprint(source_images)
     break
-image_url = "https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts.jpg"
-image_filename = "temporary_image.png"
-download_image(image_url, image_filename)
-# Apply the watermark and save the image
-watermark_text = subdomain + "Doap.com"
-output_filename = "watermarked_image.png"
-add_watermark_and_save(image_filename, watermark_text, output_filename)
+# image_url = "https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts.jpg"
+# image_filename = "temporary_image.png"
+# download_image(image_url, image_filename)
+# # Apply the watermark and save the image
+# watermark_text = city + " Doap " + phone
+# output_filename = "watermarked_image.png"
+# add_watermark_and_save(image_filename, watermark_text, output_filename)
 # add_watermark_and_save("temporary_image.png")
 
