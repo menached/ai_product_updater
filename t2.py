@@ -116,54 +116,6 @@ def generate(new_pics_prompt):
     return res["data"][0]["url"]
 
 
-def add_watermark(image_url, watermark_text):
-    try:
-        response = requests.get(image_url, stream=True)
-        response.raise_for_status()
-
-        # Save the image to a file
-        with open('temporary_image.png', 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-
-        # Open the image from the file
-        image = Image.open('temporary_image.png')
-
-        # Create a drawing object for the image
-        draw = ImageDraw.Draw(image)
-
-        # Define the font and size for the watermark
-        font = ImageFont.truetype('font.ttf', size=40)
-
-        pdb.set_trace()
-        # Calculate the position to place the watermark text (centered on the image)
-        text_width, text_height = draw.textsize(watermark_text, font=font)
-
-        pdb.set_trace()
-        watermark_width = int(text_width * 1.2)
-        watermark_height = int(text_height * 1.2)
-        x = (image.width - watermark_width) // 2
-        y = (image.height - watermark_height) // 2
-
-        # Create a transparent background for the watermark text
-        watermark = Image.new('RGBA', (watermark_width, watermark_height), (255, 255, 255, 0))
-        pdb.set_trace()
-        watermark_draw = ImageDraw.Draw(watermark)
-
-        # Apply the watermark text to the transparent background
-        watermark_draw.text((0, 0), watermark_text, font=font, fill=(255, 255, 255, 128))
-
-        # Paste the watermark onto the image
-        image.paste(watermark, (x, y), watermark)
-
-        # Save the modified image (you can overwrite the original file or save to a new file)
-        image.save('path_to_save_image.png')
-
-    except Exception as e:
-        print(f"Error adding watermark to image: {str(e)}")
-        pdb.set_trace()
-
-
 locations = []
 
 # Open the credentials file
@@ -321,7 +273,7 @@ for locationb in locations[2:]:
             print(new_unique_product_name)
             print(item['src'])
             image_url = item['src']
-            add_watermark(image_url, "Doap.com")
+            # add_watermark(image_url, "Doap.com")
         else:
             
             ##### new_unique_product_name = generate_new_image_name(itemname).replace('"','')
@@ -333,4 +285,3 @@ for locationb in locations[2:]:
 
     #pprint.pprint(source_images)
     break
-
