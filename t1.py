@@ -285,17 +285,11 @@ for locationa in locations:
         itemurl = item['src']        
         print(itemurl)
 
-        pdb.set_trace()
-        # Example usage
-        local_file = '/Users/dmenache/Nextcloud/Projects/doap-api/ai_product_updater/file.txt'
-        pdb.set_trace()
+        local_file = '/Users/dmenache/Nextcloud/Projects/doap-api/ai_product_updater/' + output_filename
         remote_server = 'dmenache@debian.doap.com'
-        pdb.set_trace()
-        remote_file = f'{remote_server}:/var/www/doap.com/wp-content/uploads/sites/29/2023/09/file.txt'
-        pdb.set_trace()
+        remote_file = f'{remote_server}:/var/www/doap.com/wp-content/uploads/sites/29/2023/09/{output_filename}'
 
         scp_file_to_remote(local_file, remote_file)
-        pdb.set_trace()
 
     break
 
