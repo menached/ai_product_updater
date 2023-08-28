@@ -69,7 +69,7 @@ def download_image(url, filename):
 
 
 def add_watermark_and_save(image_path, watermark_text, output_path):
-    try:
+    try:    
         # Open the image
         image = Image.open(image_path).convert("RGBA")
 
@@ -256,41 +256,15 @@ for locationa in locations:
     product = response.json()[0]
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-
-    source_product_name = product['name'].strip()
-    print("Source Product\n",source_product_name)
-    print(website, aikey)
-    print()
     source_images = source_product['images'][:4]  
-    print("Source Images")
-    print()
-    imgcnt = 0
     for item in source_images:
-        imgcnt = imgcnt + 1
-        itemname = item['name'].replace('-',' ').capitalize()
-        print("Image #", imgcnt)
-        new_unique_product_name = generate_new_image_name(product['name'])
-        new_unique_product_name = new_unique_product_name.replace('"','')
-        new_unique_file_name = new_unique_product_name.replace(" ", "_")
-        print(new_unique_product_name)
-        item['name'] = new_unique_product_name
-        #print(item['src'])
-        pprint.pprint(item)
-        image_url = item['src']
-        image_filename = os.path.basename(image_url)
-        download_image(image_url, image_filename)
-        watermark_text = city + " Doap " + phone
-        output_filename = new_unique_file_name + ".png"
-        add_watermark_and_save(image_filename, watermark_text, output_filename)
-        itemurl = item['src']        
-        print(itemurl)
-
-        local_file = '/Users/dmenache/Nextcloud/Projects/doap-api/ai_product_updater/' + output_filename
-        remote_server = 'dmenache@debian.doap.com'
-        remote_file = f'{remote_server}:/var/www/doap.com/wp-content/uploads/sites/29/2023/09/{output_filename}'
-
-        scp_file_to_remote(local_file, remote_file)
-
+        source_product_name = product['name'].strip()
+        print("Source Product\n",source_product_name)
+        print(website, aikey)
+        print("Source Images")
+        imgcnt = 0
+        pprint.pprint(source_images)
+        source_image_url = item['src']
     break
 
 # new_product_name = generate_new_product_name(sku)
@@ -299,7 +273,7 @@ for locationa in locations:
 seq = 0
 #fetches all but the first product and applies the updated first site product details.
 print("Destination Products\n")
-for locationb in locations[2:]:
+for locationb in locations[1:]:
     seq = seq + 1
     base_url = "https://" + locationb.website + "/wp-json/wc/v3/products"
     consumer_key = locationb.website + "_consumer_key:" + locationb.consumer_key
@@ -323,7 +297,6 @@ for locationb in locations[2:]:
     product = response.json()[0]
     #source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-    print()
     msgg = "#" + str(seq) + " " + str(sku)
     print(msgg)
     subdomain = website.split('.')[0]
@@ -331,26 +304,42 @@ for locationb in locations[2:]:
     print(city, "Doap")
     print(city, " Ca ", phone)
     print("Sku: ", sku)
-    print()
-    print("Dest product name")
-   
    # First AI call: generate new product name
     product['name'] = generate_new_product_name(sku).replace('"','')
-    #print(product['name'])
-
-    print()
-    print("Images")
-    print()
+    print("New dest product name: ", product['name'])
+    print("New Images")
     imgcnt = 0
     for item in source_images:
         imgcnt = imgcnt + 1
         itemname = item['name'].replace('-',' ').capitalize()
         print("Image #", imgcnt)
-        if  "Screen" in itemname:
-            print("*", itemname)
-        else:
-            print(itemname)
-
+        imgcnt = imgcnt + 1
+        itemname = item['name'].replace('-',' ').capitalize()
+        # print("Image #", imgcnt)
+        new_unique_product_name = generate_new_image_name(product['name']).replace('"','').replace('"','').replace("'","").replace(" ","_")
+        new_unique_file_name = new_unique_product_name
+        item['name'] = new_unique_product_name
+        # print(item['name'], " : ", item['src'])
+        source_image_url = item['src']
+        source_image_filename = os.path.basename(source_image_url)
+        new_unique_file_name = new_unique_file_name + ".png"
+        download_image(source_image_url, source_image_filename)
+        print("Source image url: ", source_image_url)
+        replaced_url = source_image_url.replace("https://alamo.", "/var/www/")
+        stripped_path = "/".join(replaced_url.split("/")[:-1])
+        print("Remote file path: ", stripped_path)
+        pdb.set_trace()
+        #item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
+        item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
+        item['src'] = item['src'].replace("/var/www/doap.com/","")
+        pdb.set_trace()
+        watermark_text = city + " Doap " + phone
+        add_watermark_and_save(source_image_filename, watermark_text, new_unique_file_name)
+        local_file = '/Users/dmenache/Nextcloud/Projects/doap-api/ai_product_updater/' + new_unique_file_name 
+        remote_server = 'dmenache@debian.doap.com'
+        remote_file = f'{remote_server}:{stripped_path}/{new_unique_file_name}'
+        scp_file_to_remote(local_file, remote_file)
+        #pprint.pprint(item)
     #pprint.pprint(source_images)
     break
 # image_url = "https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts.jpg"
