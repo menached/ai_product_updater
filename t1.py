@@ -19,7 +19,32 @@ from PIL import Image, ImageDraw, ImageFont
 from PIL import UnidentifiedImageError
 if not nltk.data.find('tokenizers/punkt'):
     nltk.download('punkt', quiet=True)
- 
+
+sitelist = [
+  { "subdomain": "alamo", "site_id": 29 },
+  { "subdomain": "burlingame", "site_id": 30 },
+  { "subdomain": "campbell", "site_id": 7 },
+  { "subdomain": "castrovalley", "site_id": 25 },
+  { "subdomain": "concord", "site_id": 31 },
+  { "subdomain": "danville", "site_id": 9 },
+  { "subdomain": "dublin", "site_id": 8 },
+  { "subdomain": "hillsborough", "site_id": 12 },
+  { "subdomain": "lafayette", "site_id": 13 },
+  { "subdomain": "livermore", "site_id": 14 },
+  { "subdomain": "orinda", "site_id": 34 },
+  { "subdomain": "pittsburg", "site_id": 28 },
+  { "subdomain": "pleasanthill", "site_id": 35 },
+  { "subdomain": "sanramon", "site_id": 33 },
+  { "subdomain": "walnutcreek", "site_id": 32 }
+]
+
+
+def get_site_id(subdomain):
+  for site in sitelist:
+    if site["subdomain"] == subdomain:
+      return site["site_id"]
+  return None
+
 # Get the first command line argument
 location = sys.argv[1]
 sku = sys.argv[2]
@@ -49,7 +74,6 @@ def scp_file_to_remote(local_file, remote_file):
     try:
         # Run SCP command
         subprocess.Popen(["scp", local_file, remote_file])
-        pdb.set_trace()
         print("File transfer initiated.")
         
     except Exception as e:
@@ -301,6 +325,8 @@ for locationb in locations[1:]:
     print(msgg)
     subdomain = website.split('.')[0]
     print("Domain: ", subdomain)
+    site_id = get_site_id(subdomain)
+    print("Site ID:", site_id) 
     print(city, "Doap")
     print(city, " Ca ", phone)
     print("Sku: ", sku)
@@ -313,7 +339,6 @@ for locationb in locations[1:]:
         imgcnt = imgcnt + 1
         itemname = item['name'].replace('-',' ').capitalize()
         print("Image #", imgcnt)
-        imgcnt = imgcnt + 1
         itemname = item['name'].replace('-',' ').capitalize()
         # print("Image #", imgcnt)
         new_unique_product_name = generate_new_image_name(product['name']).replace('"','').replace('"','').replace("'","").replace(" ","_")
@@ -327,12 +352,16 @@ for locationb in locations[1:]:
         print("Source image url: ", source_image_url)
         replaced_url = source_image_url.replace("https://alamo.", "/var/www/")
         stripped_path = "/".join(replaced_url.split("/")[:-1])
-        print("Remote file path: ", stripped_path)
-        pdb.set_trace()
+        print("Orig file path: ", stripped_path)
+        
+        new_path = stripped_path.split("/")
+        new_path[5] = str(site_id)
+        new_path = "/".join(new_path)
+
+        print("New remote file path: ", new_path)
         #item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
         item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
         item['src'] = item['src'].replace("/var/www/doap.com/","")
-        pdb.set_trace()
         watermark_text = city + " Doap " + phone
         add_watermark_and_save(source_image_filename, watermark_text, new_unique_file_name)
         local_file = '/Users/dmenache/Nextcloud/Projects/doap-api/ai_product_updater/' + new_unique_file_name 
