@@ -48,10 +48,11 @@ class Location:
 def scp_file_to_remote(local_file, remote_file):
     try:
         # Run SCP command
-        subprocess.run(["scp", local_file, remote_file])
-        print("File copied successfully!")
-
-    except subprocess.CalledProcessError as e:
+        subprocess.Popen(["scp", local_file, remote_file])
+        pdb.set_trace()
+        print("File transfer initiated.")
+        
+    except Exception as e:
         print("Error while copying the file:", e)
 
 def download_image(url, filename):
