@@ -1,5 +1,6 @@
 # Import necessary libraries
 import openai
+import subprocess
 import sys
 import json
 import html
@@ -44,7 +45,14 @@ class Location:
         self.consumer_secret = consumer_secret
         self.api_key = api_key  # Here's the new attribute
 
+def scp_file_to_remote(local_file, remote_file):
+    try:
+        # Run SCP command
+        subprocess.run(["scp", local_file, remote_file])
+        print("File copied successfully!")
 
+    except subprocess.CalledProcessError as e:
+        print("Error while copying the file:", e)
 
 def download_image(url, filename):
     try:
@@ -84,32 +92,21 @@ def add_watermark_and_save(image_path, watermark_text, output_path):
         print(f"Error: {str(e)}")
 
 
-def add_watermark(filename):
-    try:
-        # Open the image
-        image = Image.open(filename).convert("RGBA")
-
-        # Define the watermark text and font style
-        watermark_text = "Watermark"
-        font = ImageFont.truetype("font.ttf", 40)
-
-        # Create a transparent overlay and draw the watermark text
-        overlay = Image.new("RGBA", image.size, (0, 0, 0, 0))
-        draw = ImageDraw.Draw(overlay)
-        text_width, text_height = draw.textbbox((0, 0), watermark_text, font=font)[:2]
-
-        position = ((image.width - text_width) // 2, (image.height - text_height) // 2)
-        draw.text(position, watermark_text, font=font, fill=(128, 128, 128, 128))
-
-        # Composite the image and watermark overlay
-        watermarked = Image.alpha_composite(image, overlay)
-
-        # Save the watermarked image with a new filename
-        watermarked_filename = f"watermarked_{filename}"
-        watermarked.save(watermarked_filename)
-        print(f"Watermarked image saved as {watermarked_filename}")
-    except Exception as e:
-        print(f"Error: {str(e)}")
+def makeunique(new_unique_product_name):
+    ai_response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful budtender who knows all about the cannabis industry.",
+            },
+            {
+                "role": "user",
+                "content": f"Use this product name '{new_unique_product_name}'. Use this phrase to come up with a slightly different name that means the same thing."
+            f"Come up with a new name that is max 70 chars long and will rank well with regard to SEO. If there is a mention of price. Change it to some other descriptive language instead."
+            },
+        ]
+    )
 
 
 def generate_new_product_name(sku):
@@ -271,12 +268,34 @@ for locationa in locations:
         imgcnt = imgcnt + 1
         itemname = item['name'].replace('-',' ').capitalize()
         print("Image #", imgcnt)
-        if  "Screen" in itemname:
-            print("*", itemname)
-        else:
-            print(itemname)
+        new_unique_product_name = generate_new_image_name(product['name'])
+        new_unique_product_name = new_unique_product_name.replace('"','')
+        new_unique_file_name = new_unique_product_name.replace(" ", "_")
+        print(new_unique_product_name)
+        item['name'] = new_unique_product_name
+        #print(item['src'])
+        pprint.pprint(item)
+        image_url = item['src']
+        image_filename = os.path.basename(image_url)
+        download_image(image_url, image_filename)
+        watermark_text = city + " Doap " + phone
+        output_filename = new_unique_file_name + ".png"
+        add_watermark_and_save(image_filename, watermark_text, output_filename)
         itemurl = item['src']        
         print(itemurl)
+
+        pdb.set_trace()
+        # Example usage
+        local_file = '/Users/dmenache/Nextcloud/Projects/doap-api/ai_product_updater/file.txt'
+        pdb.set_trace()
+        remote_server = 'dmenache@debian.doap.com'
+        pdb.set_trace()
+        remote_file = f'{remote_server}:/var/www/doap.com/wp-content/uploads/sites/29/2023/09/file.txt'
+        pdb.set_trace()
+
+        scp_file_to_remote(local_file, remote_file)
+        pdb.set_trace()
+
     break
 
 # new_product_name = generate_new_product_name(sku)
@@ -333,28 +352,9 @@ for locationb in locations[2:]:
         itemname = item['name'].replace('-',' ').capitalize()
         print("Image #", imgcnt)
         if  "Screen" in itemname:
-            new_unique_product_name = new_unique_product_name.replace('"','')
-            new_unique_file_name = new_unique_product_name.replace(" ", "_")
-            print(new_unique_product_name)
-            print(item['src'])
-            image_url = item['src']
-            image_filename = os.path.basename(image_url)
-            download_image(image_url, image_filename)
-            watermark_text = city + " Doap " + phone
-            output_filename = new_unique_file_name + ".png"
-            add_watermark_and_save(image_filename, watermark_text, output_filename)
+            print("*", itemname)
         else:
-            new_unique_product_name = itemname
-            new_unique_file_name = new_unique_product_name.replace(" ", "_")
-            item['name'] = new_unique_product_name 
-            print(new_unique_product_name)
-            print(item['src'])
-            image_url = item['src']
-            image_filename = os.path.basename(image_url)
-            download_image(image_url, image_filename)
-            watermark_text = city + " Doap " + phone
-            output_filename = new_unique_file_name + ".png"
-            add_watermark_and_save(image_filename, watermark_text, output_filename)
+            print(itemname)
 
     #pprint.pprint(source_images)
     break
