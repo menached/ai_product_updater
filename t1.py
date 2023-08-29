@@ -147,7 +147,7 @@ def generate_new_product_name(sku):
             {
                 "role": "user",
                 "content": f"Use this product slug '{product['slug']}' to rewrite the product title. The slug contains words separated by a -."
-            f"Use them to come up with a new name that is max 70 chars long and will rank well with regard to SEO. If there is a mention of price. Change it to some other descriptive language."
+            f"Use them to come up with a new name that is max 70 chars long and will rank well with regard to SEO. If there is a mention of price. Change it to some other descriptive language. Dont put spaces in the names. Use underscores to separate words."
             },
         ]
     )
@@ -168,7 +168,7 @@ def generate_new_image_name(image_name):
             },
             {
                 "role": "user",
-                "content": f"I have an image with the name '{image_name}'. Please suggest a new name for the image that does not use dates or times in the name. Limit the name to 70 characters."
+                "content": f"I have an image with the name '{image_name}'. Please suggest a new name for the image that does not use dates or times in the name. Limit the name to 70 characters. Dont put spaces in the names. Use underscores to separate words."
             },
         ]
     )
@@ -283,15 +283,29 @@ for locationa in locations:
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
     source_images = source_product['images'][:4]  
+    imagecounter = 0
     for item in source_images:
-        source_product_name = product['name'].strip()
-        print("Source Product\n",source_product_name)
-        print(website, aikey)
+        imagecounter = imagecounter + 1
+        print("Image:",imagecounter)
+        #source_product_name = product['name'].strip()
         print("Source Images")
-        imgcnt = 0
-        pprint.pprint(source_images)
-        source_image_url = item['src']
+        pdb.set_trace()
+        item['src'] = item['src'].replace("/29/","/30/")
+        item['src'] = item['src'].replace("alamo","burlingame")
+        pdb.set_trace()
     break
+        #imgcnt = 0
+        #pprint.pprint(source_images)
+        #source_image_url = item['src']
+    # for item in source_images:
+        # source_product_name = product['name'].strip()
+        # print("Source Product\n",source_product_name)
+        # print(website, aikey)
+        # print("Source Images")
+        # imgcnt = 0
+        # pprint.pprint(source_images)
+        # source_image_url = item['src']
+    # break
 
 # new_product_name = generate_new_product_name(sku)
 # print("New name suggestion:", new_product_name)
@@ -323,11 +337,8 @@ for locationb in locations[1:]:
     product = response.json()[0]
     #source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-    pdb.set_trace()
     product['images'] = source_product['images'] 
-    pdb.set_trace()
     msgg = "#" + str(seq) + " " + str(sku)
-    pdb.set_trace()
     print(msgg)
     subdomain = website.split('.')[0]
     print("Domain: ", subdomain)
@@ -337,7 +348,7 @@ for locationb in locations[1:]:
     print(city, " Ca ", phone)
     print("Sku: ", sku)
    # First AI call: generate new product name
-    product['name'] = generate_new_product_name(sku).replace('"','')
+    product['name'] = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","")
     print("New dest product name: ", product['name'])
     print("New Images")
     imgcnt = 0
@@ -347,7 +358,7 @@ for locationb in locations[1:]:
         print("Image #", imgcnt)
         itemname = item['name'].replace('-',' ').capitalize()
         # print("Image #", imgcnt)
-        new_unique_product_name = generate_new_image_name(product['name']).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","")
+        new_unique_product_name = generate_new_image_name(product['name']).replace('"','').replace('"','').replace("'","").replace("!","").replace("(","").replace(")","").replace(",","")
         new_unique_file_name = new_unique_product_name
         item['name'] = new_unique_product_name
         # print(item['name'], " : ", item['src'])
@@ -376,7 +387,9 @@ for locationb in locations[1:]:
         scp_file_to_remote(local_file, remote_file)
         #pprint.pprint(item)
         #pprint.pprint(source_images)
+        pdb.set_trace()
         product['images'] = source_images
+        pdb.set_trace()
         #pprint.pprint(product)
         # pprint.pprint(product)
         print("product[images]",product['images'])
