@@ -107,7 +107,8 @@ def add_watermark_and_save(image_path, watermark_text, output_path):
         # position = ((image.width - text_width) // 2, (image.height - text_height) // 2)
         position = (image.width - text_width - 10, image.height - text_height - 10) # Position the watermark in the lower right corner
 
-        draw.text(position, watermark_text, font=font, fill=(128, 128, 128, 128))
+        #draw.text(position, watermark_text, font=font, fill=(128, 128, 128, 128))
+        draw.text(position, watermark_text, font=font, fill=(0, 0, 0, 128))
 
         # Composite the image and watermark overlay
         watermarked = Image.alpha_composite(image, overlay)
@@ -389,13 +390,24 @@ for locationb in locations[1:]:
         #pprint.pprint(item)
         #pprint.pprint(source_images)
         product['images'] = source_images
+        pdb.set_trace()
         #pprint.pprint(product)
         # pprint.pprint(product)
         print("product[images]",product['images'])
+        pdb.set_trace()
+        print()
         print("source_images",source_images)
+        pdb.set_trace()
+        print()
         print("product[images]",product['images'])
-        pprint.pprint(source_images['images'])
+        pdb.set_trace()
+        print()
+        pprint.pprint(source_images)
+        print()
+        pdb.set_trace()
         pprint.pprint(product['images'])
+        print()
+        pdb.set_trace()
         update_url = f'{base_url}/{product["id"]}'
         update_response = requests.put(update_url, json=product, auth=auth)
     break
