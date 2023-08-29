@@ -104,7 +104,9 @@ def add_watermark_and_save(image_path, watermark_text, output_path):
         overlay = Image.new("RGBA", image.size, (0, 0, 0, 0))
         draw = ImageDraw.Draw(overlay)
         text_width, text_height = draw.textbbox((0, 0), watermark_text, font=font)[:2]
-        position = ((image.width - text_width) // 2, (image.height - text_height) // 2)
+        # position = ((image.width - text_width) // 2, (image.height - text_height) // 2)
+        position = (image.width - text_width - 10, image.height - text_height - 10) # Position the watermark in the lower right corner
+
         draw.text(position, watermark_text, font=font, fill=(128, 128, 128, 128))
 
         # Composite the image and watermark overlay
@@ -321,8 +323,11 @@ for locationb in locations[1:]:
     product = response.json()[0]
     #source_product = product
     source_product['images'] = remove_keys(source_product['images'])
+    pdb.set_trace()
     product['images'] = source_product['images'] 
+    pdb.set_trace()
     msgg = "#" + str(seq) + " " + str(sku)
+    pdb.set_trace()
     print(msgg)
     subdomain = website.split('.')[0]
     print("Domain: ", subdomain)
