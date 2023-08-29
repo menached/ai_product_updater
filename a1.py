@@ -248,13 +248,8 @@ for locationb in locations[1:]:
     base_url = "https://" + locationb.website + "/wp-json/wc/v3/products"
     consumer_key = locationb.website + "_consumer_key:" + locationb.consumer_key
     consumer_secret = locationb.website + "_consumer_secret:" + locationb.consumer_secret
-    #city = locationb.city
-    #city = city.replace('"', '')
-    #phone = locationb.phone
-    #phone = phone.replace(' ', '').replace('-', '').replace('"', '').replace('(', '').replace(')', '')
     website = locationb.website
     subdomain = website.split('.')[0]
-    print("Domain: ", subdomain)
     site_id = get_site_id(subdomain)
     print("Site ID:", site_id) 
     aikey = openai.api_key
@@ -265,19 +260,16 @@ for locationb in locations[1:]:
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
     product = response.json()[0]
-    #source_product = product
     source_product['images'] = remove_keys(source_product['images'])
     product['images'] = source_product['images'] 
     msgg = "#" + str(seq) + " " + str(sku)
     print(msgg)
-    #print("Sku: ", sku)
     product['name'] = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","").replace("$","")
     print("New dest product name: ", product['name'])
-    print("New Images")
+    #print("New Images")
     imgcnt = 0
     for item in source_images:
         imgcnt = imgcnt + 1
-        #itemname = item['name'].replace('-',' ').capitalize()
         print("Image #", imgcnt)
     break
 pprint.pprint(product)
