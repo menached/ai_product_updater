@@ -323,11 +323,11 @@ for locationb in locations[1:]:
     product = response.json()[0]
     #source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-    pdb.set_trace()
+    #pdb.set_trace()
     product['images'] = source_product['images'] 
-    pdb.set_trace()
+    #pdb.set_trace()
     msgg = "#" + str(seq) + " " + str(sku)
-    pdb.set_trace()
+    #pdb.set_trace()
     print(msgg)
     subdomain = website.split('.')[0]
     print("Domain: ", subdomain)
@@ -350,36 +350,57 @@ for locationb in locations[1:]:
         new_unique_product_name = generate_new_image_name(product['name']).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","")
         new_unique_file_name = new_unique_product_name
         item['name'] = new_unique_product_name
-        # print(item['name'], " : ", item['src'])
-        source_image_url = item['src']
+        print(item['name'], " : ", item['src'])
+        #source_image_url = item['src']
+        pdb.set_trace()
         source_image_filename = os.path.basename(source_image_url)
+        pdb.set_trace()
         new_unique_file_name = new_unique_file_name + ".png"
+        pdb.set_trace()
         download_image(source_image_url, source_image_filename)
+        pdb.set_trace()
         print("Source image url: ", source_image_url)
+        pdb.set_trace()
         replaced_url = source_image_url.replace("https://alamo.", "/var/www/")
+        pdb.set_trace()
         stripped_path = "/".join(replaced_url.split("/")[:-1])
+        pdb.set_trace()
         print("Orig file path: ", stripped_path)
         
         new_path = stripped_path.split("/")
         new_path[7] = str(site_id)
         new_path = "/".join(new_path)
 
+        pdb.set_trace()
         print("New remote file path: ", new_path)
         #item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
-        item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
-        item['src'] = item['src'].replace("/var/www/doap.com/","")
+        #item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
+        #item['src'] = item['src'].replace("/var/www/doap.com/","")
+        #source_image_filename = item['src']
+        pdb.set_trace()
         watermark_text = city + " Doap " + phone
+        pdb.set_trace()
         add_watermark_and_save(source_image_filename, watermark_text, new_unique_file_name)
+        pdb.set_trace()
         local_file = '/Users/dmenache/Nextcloud/Projects/doap-api/ai_product_updater/' + new_unique_file_name 
         remote_server = 'dmenache@debian.doap.com'
         remote_file = f'{remote_server}:{stripped_path}/{new_unique_file_name}'
         scp_file_to_remote(local_file, remote_file)
         #pprint.pprint(item)
-    #pprint.pprint(source_images)
+        #pprint.pprint(source_images)
+        product['images'] = source_images
+        #pprint.pprint(product)
+        # pprint.pprint(product)
+        print("product[images]",product['images'])
+        print("source_images",source_images)
+        print("product[images]",product['images'])
+        pprint.pprint(source_images['images'])
+        pprint.pprint(product['images'])
         update_url = f'{base_url}/{product["id"]}'
         update_response = requests.put(update_url, json=product, auth=auth)
-        update_response.raise_for_status()
-        pprint.pprint(product)
-        pdb.set_trace()
     break
-
+pprint.pprint(product)
+#update_url = f'{base_url}/{product["id"]}'
+#update_response = requests.put(update_url, json=product, auth=auth)
+#update_response.raise_for_status()
+pdb.set_trace()
