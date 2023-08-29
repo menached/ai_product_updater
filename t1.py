@@ -107,8 +107,7 @@ def add_watermark_and_save(image_path, watermark_text, output_path):
         # position = ((image.width - text_width) // 2, (image.height - text_height) // 2)
         position = (image.width - text_width - 10, image.height - text_height - 10) # Position the watermark in the lower right corner
 
-        #draw.text(position, watermark_text, font=font, fill=(128, 128, 128, 128))
-        draw.text(position, watermark_text, font=font, fill=(0, 0, 0, 128))
+        draw.text(position, watermark_text, font=font, fill=(128, 128, 128, 128))
 
         # Composite the image and watermark overlay
         watermarked = Image.alpha_composite(image, overlay)
@@ -324,11 +323,11 @@ for locationb in locations[1:]:
     product = response.json()[0]
     #source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-    #pdb.set_trace()
+    pdb.set_trace()
     product['images'] = source_product['images'] 
-    #pdb.set_trace()
+    pdb.set_trace()
     msgg = "#" + str(seq) + " " + str(sku)
-    #pdb.set_trace()
+    pdb.set_trace()
     print(msgg)
     subdomain = website.split('.')[0]
     print("Domain: ", subdomain)
@@ -351,38 +350,26 @@ for locationb in locations[1:]:
         new_unique_product_name = generate_new_image_name(product['name']).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","")
         new_unique_file_name = new_unique_product_name
         item['name'] = new_unique_product_name
-        print(item['name'], " : ", item['src'])
-        #source_image_url = item['src']
-        pdb.set_trace()
+        # print(item['name'], " : ", item['src'])
+        source_image_url = item['src']
         source_image_filename = os.path.basename(source_image_url)
-        pdb.set_trace()
         new_unique_file_name = new_unique_file_name + ".png"
-        pdb.set_trace()
         download_image(source_image_url, source_image_filename)
-        pdb.set_trace()
         print("Source image url: ", source_image_url)
-        pdb.set_trace()
         replaced_url = source_image_url.replace("https://alamo.", "/var/www/")
-        pdb.set_trace()
         stripped_path = "/".join(replaced_url.split("/")[:-1])
-        pdb.set_trace()
         print("Orig file path: ", stripped_path)
         
         new_path = stripped_path.split("/")
         new_path[7] = str(site_id)
         new_path = "/".join(new_path)
 
-        pdb.set_trace()
         print("New remote file path: ", new_path)
         #item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
-        #item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
-        #item['src'] = item['src'].replace("/var/www/doap.com/","")
-        #source_image_filename = item['src']
-        pdb.set_trace()
+        item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
+        item['src'] = item['src'].replace("/var/www/doap.com/","")
         watermark_text = city + " Doap " + phone
-        pdb.set_trace()
         add_watermark_and_save(source_image_filename, watermark_text, new_unique_file_name)
-        pdb.set_trace()
         local_file = '/Users/dmenache/Nextcloud/Projects/doap-api/ai_product_updater/' + new_unique_file_name 
         remote_server = 'dmenache@debian.doap.com'
         remote_file = f'{remote_server}:{stripped_path}/{new_unique_file_name}'
@@ -390,29 +377,14 @@ for locationb in locations[1:]:
         #pprint.pprint(item)
         #pprint.pprint(source_images)
         product['images'] = source_images
-        pdb.set_trace()
         #pprint.pprint(product)
         # pprint.pprint(product)
         print("product[images]",product['images'])
-        pdb.set_trace()
-        print()
         print("source_images",source_images)
-        pdb.set_trace()
-        print()
         print("product[images]",product['images'])
-        pdb.set_trace()
-        print()
-        pprint.pprint(source_images)
-        print()
-        pdb.set_trace()
-        pprint.pprint(product['images'])
-        print()
-        pdb.set_trace()
-        update_url = f'{base_url}/{product["id"]}'
-        update_response = requests.put(update_url, json=product, auth=auth)
     break
 pprint.pprint(product)
-#update_url = f'{base_url}/{product["id"]}'
-#update_response = requests.put(update_url, json=product, auth=auth)
-#update_response.raise_for_status()
 pdb.set_trace()
+update_url = f'{base_url}/{product["id"]}'
+update_response = requests.put(update_url, json=product, auth=auth)
+update_response.raise_for_status()
