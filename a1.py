@@ -239,7 +239,7 @@ for locationa in locations[:1]:
     imagecounter = 0
     for item in source_images:
         imagecounter = imagecounter + 1
-        print("Image:",imagecounter, " src:", item['src'])
+        print("Source Image ", imagecounter, "name: ", item['name'], " src:", item['src'])
 
 seq = 0
 print("Destination Products\n")
@@ -261,7 +261,7 @@ for locationb in locations[1:]:
     response.raise_for_status()
     product = response.json()[0]
     product['images'] = source_product['images'] 
-    msgg = "#" + str(seq) + " " + str(sku)
+    msgg = subdomain + " #" + str(seq) + " " + str(sku)
     print(msgg)
     while True:
         product_name = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","").replace("$","")
@@ -272,16 +272,14 @@ for locationb in locations[1:]:
             break
         else:
             continue
-    # to speed stuff up during dev
-    del product['images'];
-
     print("Selected new product name: ", product['name'])
 
-#print("New Images")
+    del product['images'];
+    print(subdomain + " existing images")
     imgcnt = 0
     for item in source_images:
         imgcnt = imgcnt + 1
-        print("Image #", imgcnt)
+        print("Image: ", imgcnt, " ", item['name'], " ", item['src'])
     #break
 #pprint.pprint(product)
 pdb.set_trace()
