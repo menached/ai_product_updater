@@ -382,7 +382,6 @@ for locationb in locations[1:]:
         print("product[images]",product['images'])
         print("source_images",source_images)
         print("product[images]",product['images'])
-
     break
 pprint.pprint(product)
 pdb.set_trace()
