@@ -341,7 +341,7 @@ for locationb in locations[1:]:
         print("Image #", imgcnt)
         itemname = item['name'].replace('-',' ').capitalize()
         # print("Image #", imgcnt)
-        new_unique_product_name = generate_new_image_name(product['name']).replace('"','').replace('"','').replace("'","").replace(" ","_")
+        new_unique_product_name = generate_new_image_name(product['name']).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","")
         new_unique_file_name = new_unique_product_name
         item['name'] = new_unique_product_name
         # print(item['name'], " : ", item['src'])
@@ -371,12 +371,4 @@ for locationb in locations[1:]:
         #pprint.pprint(item)
     #pprint.pprint(source_images)
     break
-# image_url = "https://alamo.doap.com/wp-content/uploads/sites/29/2023/08/vape-carts.jpg"
-# image_filename = "temporary_image.png"
-# download_image(image_url, image_filename)
-# # Apply the watermark and save the image
-# watermark_text = city + " Doap " + phone
-# output_filename = "watermarked_image.png"
-# add_watermark_and_save(image_filename, watermark_text, output_filename)
-# add_watermark_and_save("temporary_image.png")
 
