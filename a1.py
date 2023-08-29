@@ -260,13 +260,22 @@ for locationb in locations[1:]:
     response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
     response.raise_for_status()
     product = response.json()[0]
-    source_product['images'] = remove_keys(source_product['images'])
     product['images'] = source_product['images'] 
     msgg = "#" + str(seq) + " " + str(sku)
     print(msgg)
-    product['name'] = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","").replace("$","")
-    print("New dest product name: ", product['name'])
-    #print("New Images")
+    while True:
+        product_name = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","").replace("$","")
+        print("Is this new product name ok?: ", product_name)
+        choice = input("Do you want to use this? [Y/N]: ")
+        if choice.lower() == "y":
+            product['name'] = product_name 
+            break
+        else:
+            continue
+
+    print("Selected new product name: ", product['name'])
+
+#print("New Images")
     imgcnt = 0
     for item in source_images:
         imgcnt = imgcnt + 1
