@@ -38,18 +38,6 @@ sitelist = [
   { "subdomain": "walnutcreek", "site_id": 32 }
 ]
 
-def update_src_values(images, sitelist):
-    for image in images:
-        for site in sitelist:
-            pdb.set_trace()
-            if site['subdomain'] in image['src']:
-                pdb.set_trace()
-                #image['src'] = image['src'].replace(str(site['site_id']), str(site['subdomain']))
-                image['src'] = image['src'].replace("/29/","/30/")
-                image['src'] = image['src'].replace("/alamo.","/burlingame.")
-                pdb.set_trace()
-                break
-    return images
 
 def get_site_id(subdomain):
   for site in sitelist:
@@ -87,7 +75,6 @@ def scp_file_to_remote(local_file, remote_file):
         # Run SCP command
         subprocess.Popen(["scp", local_file, remote_file])
         print("File transfer initiated.")
-        #pdb.set_trace()
         
     except Exception as e:
         print("Error while copying the file:", e)
@@ -109,7 +96,6 @@ def add_watermark_and_save(image_path, watermark_text, output_path):
     try:    
         # Open the image
         image = Image.open(image_path).convert("RGBA")
-        #pdb.set_trace()
 
         # Define the watermark text and font style
         font = ImageFont.truetype("font.ttf", 40)
@@ -337,11 +323,11 @@ for locationb in locations[1:]:
     product = response.json()[0]
     #source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-    #pdb.set_trace()
+    pdb.set_trace()
     product['images'] = source_product['images'] 
-    #pdb.set_trace()
+    pdb.set_trace()
     msgg = "#" + str(seq) + " " + str(sku)
-    # pdb.set_trace()
+    pdb.set_trace()
     print(msgg)
     subdomain = website.split('.')[0]
     print("Domain: ", subdomain)
@@ -378,32 +364,19 @@ for locationb in locations[1:]:
         new_path[7] = str(site_id)
         new_path = "/".join(new_path)
 
-
         print("New remote file path: ", new_path)
         #item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
         item['src'] = "https://" + subdomain + ".doap.com/" + stripped_path + "/" + new_unique_file_name
         item['src'] = item['src'].replace("/var/www/doap.com/","")
         watermark_text = city + " Doap " + phone
-        current_directory = os.getcwd()
-        sourcename = current_directory + "/" + source_image_filename
-        destname = current_directory + "/" + new_unique_file_name
-        # add_watermark_and_save(source_image_filename, watermark_text, new_unique_file_name)
-        # add_watermark_and_save(sourcename, watermark_text, new_unique_file_name)
-        add_watermark_and_save(sourcename, watermark_text, destname)
-        pdb.set_trace()
-        #add_watermark_and_save(new_unique_file_name, watermark_text, new_unique_file_name)
+        add_watermark_and_save(source_image_filename, watermark_text, new_unique_file_name)
         local_file = '/Users/dmenache/Nextcloud/Projects/doap-api/ai_product_updater/' + new_unique_file_name 
         remote_server = 'dmenache@debian.doap.com'
-        #remote_file = f'{remote_server}:{stripped_path}/{new_unique_file_name}'
-        remote_file = f'{remote_server}:{new_path}/{new_unique_file_name}'
+        remote_file = f'{remote_server}:{stripped_path}/{new_unique_file_name}'
         scp_file_to_remote(local_file, remote_file)
         #pprint.pprint(item)
         #pprint.pprint(source_images)
         product['images'] = source_images
-        updated_images = update_src_values(source_images, sitelist)
-        pdb.set_trace()
-        product['images'] = updated_images
-        pdb.set_trace()
         #pprint.pprint(product)
         # pprint.pprint(product)
         print("product[images]",product['images'])
