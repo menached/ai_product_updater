@@ -272,6 +272,8 @@ for locationb in locations[1:]:
             break
         else:
             continue
+    # to speed stuff up during dev
+    del product['images'];
 
     print("Selected new product name: ", product['name'])
 
@@ -280,7 +282,7 @@ for locationb in locations[1:]:
     for item in source_images:
         imgcnt = imgcnt + 1
         print("Image #", imgcnt)
-    break
+    #break
 #pprint.pprint(product)
 pdb.set_trace()
 update_url = f'{base_url}/{product["id"]}'
