@@ -279,8 +279,12 @@ for locationb in locations[1:]:
     imgcnt = 0
     for item in source_images:
         imgcnt = imgcnt + 1
-        print("Image: ", imgcnt, " ", item['name'], " ", item['src'])
+        product_name = generate_new_product_name(item['name'])
+        print("Image: ", imgcnt, " ", product_name, " ", item['src'])
+        print(product_name)
     #break
+
+
 #pprint.pprint(product)
 pdb.set_trace()
 update_url = f'{base_url}/{product["id"]}'
