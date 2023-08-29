@@ -272,7 +272,7 @@ for locationb in locations[1:]:
         imgcnt = imgcnt + 1
         print("Image #", imgcnt)
     break
-pprint.pprint(product)
+#pprint.pprint(product)
 pdb.set_trace()
 update_url = f'{base_url}/{product["id"]}'
 update_response = requests.put(update_url, json=product, auth=auth)
