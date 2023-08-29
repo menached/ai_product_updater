@@ -321,6 +321,7 @@ for locationb in locations[1:]:
     product = response.json()[0]
     #source_product = product
     source_product['images'] = remove_keys(source_product['images'])
+    product['images'] = source_product['images'] 
     msgg = "#" + str(seq) + " " + str(sku)
     print(msgg)
     subdomain = website.split('.')[0]
@@ -355,7 +356,7 @@ for locationb in locations[1:]:
         print("Orig file path: ", stripped_path)
         
         new_path = stripped_path.split("/")
-        new_path[5] = str(site_id)
+        new_path[7] = str(site_id)
         new_path = "/".join(new_path)
 
         print("New remote file path: ", new_path)
@@ -370,5 +371,10 @@ for locationb in locations[1:]:
         scp_file_to_remote(local_file, remote_file)
         #pprint.pprint(item)
     #pprint.pprint(source_images)
+        update_url = f'{base_url}/{product["id"]}'
+        update_response = requests.put(update_url, json=product, auth=auth)
+        update_response.raise_for_status()
+        pprint.pprint(product)
+        pdb.set_trace()
     break
 
