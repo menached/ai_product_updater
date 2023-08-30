@@ -25,8 +25,6 @@ location, sku, startfrom = sys.argv[1], sys.argv[2], int(sys.argv[3])
 
 new_short_description = "If you are searching for exceptional locally sourced cannabis look no further than [showcity] Doap! We have greenhouse flower that is cultivated with meticulous care right here in [showcity]!   The buds are not only kick-ass strong but also bursting with incredible aromas.  We offer a product that is simply Doap!  Get 1hr service by ordering here on the website or calling or SMS [showprettyphone] or WhatsApp at 833-BUY-DOAP(833-289-3627)"
 new_description = '''Are you on the lookout for top-notch cannabis flower? Look no further! Our locally sourced cannabis flower, cultivated in the heart of [showcity], is the ultimate choice for those seeking high-quality products. Grown in our carefully controlled greenhouse environment, each strain is nurtured to perfection. From relaxing indicas to energizing sativas, we offer a wide range of strains to suit every preference.\n\nWhat sets our cannabis flower apart is our commitment to natural cultivation practices. Bathed in the warm glow of organic sunlight, our plants thrive without the use of any pesticides or harmful chemicals. This ensures a safe and healthy option for your enjoyment.\n\nWhen it comes to the experience, our buds don't disappoint. Our dense, fragrant flowers boast a superb taste and produce a smooth and flavorful smoke. It's a sensory delight that guarantees a pleasant and satisfying experience.\n\nOrdering our exceptional cannabis flower is a breeze. Simply give our friendly live budtender Steve a call at [showprettyphone]. Steve is here to assist you in selecting and ordering your desired strains. With his expertise, you can rest assured that you'll find the perfect match for your needs.\n\nDon't miss out on the opportunity to try our outstanding greenhouse cannabis flower. Give it a go today and discover the difference it can make in your cannabis experience.'''
-print(new_short_description)
-print(new_description)
 
 credentials = {}
 def get_site_id(subdomain):
@@ -101,6 +99,7 @@ def makeunique(new_unique_product_name):
     )
 
 def make_short_desc(current_short_description):
+    pdb.set_trace()
     ai_response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -110,8 +109,8 @@ def make_short_desc(current_short_description):
             },
             {
                 "role": "user",
-                "content": f"Take this short description'{new_short_decription}'and reword it slightly. Just shuffling the sentences around is fine as long as the meaning remains the same."
-            f"It should be about 150 chars long and should rank well with regard to SEO. If there is a mention of price."
+                "content": f"Use this product name '{source_product['short_description']}' to rewrite the product title."
+            f"The new name is max 70 chars long and will rank well with regard to SEO."
             },
         ]
     )
@@ -293,8 +292,10 @@ for locationb in locations[startfrom:]:
     product['meta_data'] = source_product['meta_data'] 
     product['price'] = source_product['price'] 
     product['price_html'] = source_product['price_html'] 
-    if sku == 20665:
+    pdb.set_trace()
+    if sku == '20665':
         product['short_description'] = new_short_description 
+        pdb.set_trace()
         product['description'] = new_description 
     else:
         print("No descriptions defined for that product")
@@ -304,9 +305,10 @@ for locationb in locations[startfrom:]:
     #product['brands'] = source_product['brands'] 
     #product = source_product 
     #product['slug'] = source_product['slug'] 
-    pdb.set_trace()
+    #pdb.set_trace()
     msgg = subdomain + " #" + str(seq) + " " + str(sku)
     print(msgg)
+    pdb.set_trace()
     while True:
         product_name = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace("_"," ").replace("(","").replace(")","").replace(",","").replace("$","")
         print("Is this new product name okay?: ", product_name)
