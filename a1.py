@@ -299,8 +299,8 @@ for locationb in locations[startfrom:]:
 
     print("Check product data before updating")
     #pprint.pprint(product)
-    pdb.set_trace()
+    #pdb.set_trace()
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
-    pdb.set_trace()
+    #pdb.set_trace()
     update_response.raise_for_status()
