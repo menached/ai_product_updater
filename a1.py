@@ -120,8 +120,8 @@ def generate_new_product_name(sku):
             },
             {
                 "role": "user",
-                "content": f"Use this product slug '{product['slug']}' to rewrite the product title. The slug contains words separated by a -."
-            f"Use them to come up with a new name that is max 70 chars long and will rank well with regard to SEO. If there is a mention of price. Change it to some other descriptive language. Dont put spaces in the names. Use underscores to separate words."
+                "content": f"Use this product name '{source_product['name']}' to rewrite the product title."
+            f"The new name is max 70 chars long and will rank well with regard to SEO."
             },
         ]
     )
@@ -139,7 +139,7 @@ def generate_new_image_name(image_name):
             },
             {
                 "role": "user",
-                "content": f"I have an image with the name '{image_name}'. Please suggest a new name for the image that does not use dates or times in the name. Limit the name to 70 characters. Dont put spaces in the names. Use underscores to separate words."
+                "content": f"I have an image with the name '{image_name}'. Need a new name for this image. Limit the name to 70 characters. Dont use any special punctuation."
             },
         ]
     )
@@ -278,20 +278,12 @@ for locationb in locations[startfrom:]:
     msgg = subdomain + " #" + str(seq) + " " + str(sku)
     print(msgg)
     while True:
-        product_name = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","").replace("$","")
+        product_name = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace("_"," ").replace("(","").replace(")","").replace(",","").replace("$","")
         print("Is this new product name okay?: ", product_name)
         choice = input("Do you want to use this? [Y/N]: ")
         if choice.lower() == "y":
             product['name'] = product_name 
             break
-    while True:
-        product_name = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","").replace("$","")
-        print("Is this new product name okay?: ", product_name)
-        choice = input("Do you want to use this? [Y/N]: ")
-        if choice.lower() == "y":
-            product['name'] = product_name 
-            break
-
     while True:
         choice = input("Do you want to update names of the existing images? [Y/N]: ")
         if choice.lower() == "y":
