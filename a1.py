@@ -28,7 +28,7 @@ def get_site_id(subdomain):
     if site["subdomain"] == subdomain:
       return site["site_id"]
   return None
-print("Fetch ", location.capitalize(), "product ", sku, ". Push starting at #", startfrom)
+print("Fetch ",location.capitalize(),"product",sku," Push starting at #",startfrom)
 creds_file_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),  # Get the directory of the current file
     "../creds2.txt"  # Append the relative path to the credentials file
@@ -175,7 +175,7 @@ def remove_keys(images_data):
 
 locations = []
 def prompt_continue():
-    print("Fix source product names at",location.capitalize(), "Doap before continuing... (Press 'Y' to continue or ctrl-c to cancel)")
+    print("   *Fix source product names at",location.capitalize(), "Doap before continuing...\n   (Press 'y' to continue or ctrl-c to cancel)")
     while True:
         key = input().strip()
         if key == " " or key.lower() == "y":
@@ -245,7 +245,7 @@ for locationa in locations[:1]:
     source_product['images'] = remove_keys(source_product['images'])
     source_images = source_product['images'][:4]  
     imagecounter = 0
-    print("Source images\n")
+    print("\nSource images")
     for item in source_images:
         imagecounter = imagecounter + 1
         filename = os.path.basename(item['src'])
