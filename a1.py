@@ -45,7 +45,8 @@ def get_site_id(subdomain):
 
 location = sys.argv[1]
 sku = sys.argv[2]
-
+startfrom = int(sys.argv[3])
+print(startfrom)
 credentials = {}
 
 creds_file_path = os.path.join(
@@ -243,7 +244,7 @@ for locationa in locations[:1]:
 
 seq = 0
 print("Destination Products\n")
-for locationb in locations[1:]:
+for locationb in locations[startfrom:]:
     seq = seq + 1
     base_url = "https://" + locationb.website + "/wp-json/wc/v3/products"
     consumer_key = locationb.website + "_consumer_key:" + locationb.consumer_key
@@ -265,29 +266,41 @@ for locationb in locations[1:]:
     print(msgg)
     while True:
         product_name = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","").replace("$","")
-        print("Is this new product name ok?: ", product_name)
+        print("Is this new product name okay?: ", product_name)
         choice = input("Do you want to use this? [Y/N]: ")
         if choice.lower() == "y":
             product['name'] = product_name 
             break
-        else:
-            continue
+
+    while True:
+        choice = input("Do you want to update names of the existing images? [Y/N]: ")
+        if choice.lower() == "y":
+            #del product['images']
+            print(subdomain + " existing images")
+            imgcnt = 0
+            for item in source_images:
+                imgcnt = imgcnt + 1
+                image_name = generate_new_image_name(item['name'])
+                print("Image: ", imgcnt, " ", image_name, " ", item['src'])
+                update_choice = input("Do you want to update this image? [Y/N]: ")
+                if update_choice.lower() == "y":
+                    # Code to update the image
+                    item['name'] = image_name
+                    print("New name assigned to image.", imgcnt)
+                elif update_choice.lower() == "n":
+                    print("Skipping image update.")
+                else:
+                    print("Invalid choice. Skipping image update.")
+            break
+        elif choice.lower() == "n":
+            break
+
     print("Selected new product name: ", product['name'])
 
-    del product['images'];
-    print(subdomain + " existing images")
-    imgcnt = 0
-    for item in source_images:
-        imgcnt = imgcnt + 1
-        product_name = generate_new_product_name(item['name'])
-        print("Image: ", imgcnt, " ", product_name, " ", item['src'])
-        print(product_name)
-    #break
-
-
-#pprint.pprint(product)
-pdb.set_trace()
-update_url = f'{base_url}/{product["id"]}'
-update_response = requests.put(update_url, json=product, auth=auth)
-pdb.set_trace()
-update_response.raise_for_status()
+    print("Check product data before updating")
+    #pprint.pprint(product)
+    pdb.set_trace()
+    update_url = f'{base_url}/{product["id"]}'
+    update_response = requests.put(update_url, json=product, auth=auth)
+    pdb.set_trace()
+    update_response.raise_for_status()
