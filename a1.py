@@ -263,7 +263,7 @@ for locationb in locations[startfrom:]:
     consumer_secret = locationb.website + "_consumer_secret:" + locationb.consumer_secret
     website = locationb.website
     subdomain = website.split('.')[0]
-    print("Get site # for ", subdomain, " ", get_site_id(subdomain))
+    #print("Get site # for ", subdomain, " ", get_site_id(subdomain))
     site_id = get_site_id(subdomain)
     print("Site ID:", site_id) 
     aikey = openai.api_key
@@ -275,6 +275,18 @@ for locationb in locations[startfrom:]:
     response.raise_for_status()
     product = response.json()[0]
     product['images'] = source_product['images'] 
+    product['attributes'] = source_product['attributes'] 
+    product['categories'] = source_product['categories'] 
+    product['tags'] = source_product['tags'] 
+    product['type'] = source_product['type'] 
+    product['featured'] = source_product['featured'] 
+    product['variations'] = source_product['variations'] 
+    product['related_ids'] = source_product['related_ids'] 
+    product['upsell_ids'] = source_product['upsell_ids'] 
+    product['cross_sell_ids'] = source_product['cross_sell_ids'] 
+    product['meta_data'] = source_product['meta_data'] 
+    #product = source_product 
+    pdb.set_trace()
     msgg = subdomain + " #" + str(seq) + " " + str(sku)
     print(msgg)
     while True:
