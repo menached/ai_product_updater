@@ -115,6 +115,10 @@ def generate(new_pics_prompt):
     )
     return res["data"][0]["url"]
 
+def remove_tags(text):
+    # Remove HTML tags using BeautifulSoup
+    soup = BeautifulSoup(text, "html.parser")
+    cleaned_text = soup.get_text(separator=" ")
 
 locations = []
 
@@ -191,9 +195,13 @@ for locationa in locations:
     product = response.json()[0]
     source_product = product
     source_product['images'] = remove_keys(source_product['images'])
-
+    
     source_product_name = product['name'].strip()
+    source_short_description = product['short_description'].strip()
+    source_short_description = re.sub(r"<.*?>", "", source_short_description)
+
     print("Source Product\n",source_product_name)
+    print("Source Product Short Desc\n",source_short_description)
     print(website, aikey)
     print()
     source_images = source_product['images'][:4]  

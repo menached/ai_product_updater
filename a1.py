@@ -117,6 +117,22 @@ def makeunique(new_unique_product_name):
         ]
     )
 
+def make_short_desc(current_short_description):
+    ai_response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a helpful budtender who knows all about the cannabis industry.",
+            },
+            {
+                "role": "user",
+                "content": f"Use this product name '{new_unique_product_name}'. Use this phrase to come up with a slightly different name that means the same thing."
+            f"Come up with a new name that is max 70 chars long and will rank well with regard to SEO. If there is a mention of price. Change it to some other descriptive language instead."
+            },
+        ]
+    )
+
 def generate_new_product_name(sku):
     ai_response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -271,6 +287,13 @@ for locationb in locations[startfrom:]:
         if choice.lower() == "y":
             product['name'] = product_name 
             break
+    while True:
+        product_name = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace(" ","_").replace("(","").replace(")","").replace(",","").replace("$","")
+        print("Is this new product name okay?: ", product_name)
+        choice = input("Do you want to use this? [Y/N]: ")
+        if choice.lower() == "y":
+            product['name'] = product_name 
+            break
 
     while True:
         choice = input("Do you want to update names of the existing images? [Y/N]: ")
@@ -298,8 +321,6 @@ for locationb in locations[startfrom:]:
     print("Selected new product name: ", product['name'])
 
     print("Check product data before updating")
-    #pprint.pprint(product)
-    #pdb.set_trace()
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     #pdb.set_trace()
