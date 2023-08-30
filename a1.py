@@ -245,6 +245,7 @@ for locationa in locations[:1]:
     source_product['images'] = remove_keys(source_product['images'])
     source_images = source_product['images'][:4]  
     imagecounter = 0
+    print("Source product title:\n",source_product['name'])
     print("\nSource images")
     for item in source_images:
         imagecounter = imagecounter + 1
