@@ -1,6 +1,5 @@
-import openai, subprocess, sys, json, html, re, ssl, os, math, glob, pprint, nltk, pdb, requests, time, random
+import openai, subprocess, sys, json, html, re, ssl, os, math, glob, pprint, nltk, pdb, requests, time, random  
 from PIL import Image, ImageDraw, ImageFont
-
 if not nltk.data.find('tokenizers/punkt'):
     nltk.download('punkt', quiet=True)
 
@@ -22,25 +21,18 @@ sitelist = [
   { "subdomain": "walnutcreek", "site_id": 32 }
 ]
 
-location = sys.argv[1]
-sku = sys.argv[2]
-startfrom = int(sys.argv[3])
-
+location, sku, startfrom = sys.argv[1], sys.argv[2], int(sys.argv[3])
 credentials = {}
 def get_site_id(subdomain):
   for site in sitelist:
     if site["subdomain"] == subdomain:
       return site["site_id"]
   return None
-print("Starting with site #", startfrom, " copying from ",location, " ", get_site_id(location))
-
+print("Fetch ", location.capitalize(), "product ", sku, ". Push starting at #", startfrom)
 creds_file_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),  # Get the directory of the current file
     "../creds2.txt"  # Append the relative path to the credentials file
 )
-if os.path.exists('product.json'):
-    os.remove('product.json')
-
 class Location:
     def __init__(self, website, user, city, phone, consumer_key, consumer_secret, api_key):
         self.website = website
@@ -175,7 +167,21 @@ def remove_keys(images_data):
         new_images_data.append(new_image_data)
     return new_images_data
 
+
+
+
+
+
+
 locations = []
+def prompt_continue():
+    print("Fix source product names at",location.capitalize(), "Doap before continuing... (Press 'Y' to continue or ctrl-c to cancel)")
+    while True:
+        key = input().strip()
+        if key == " " or key.lower() == "y":
+            return True
+        elif key.lower() == "n":
+            return False
 
 with open(creds_file_path) as f:
     website = None
@@ -239,12 +245,16 @@ for locationa in locations[:1]:
     source_product['images'] = remove_keys(source_product['images'])
     source_images = source_product['images'][:4]  
     imagecounter = 0
+    print("Source images\n")
     for item in source_images:
         imagecounter = imagecounter + 1
-        print("Source Image ", imagecounter, "name: ", item['name'], " src:", item['src'])
+        filename = os.path.basename(item['src'])
+        print("#",imagecounter," Name: ", item['name'], " Filename: ",filename )
+if not prompt_continue():
+    sys.exit()
 
 seq = 0
-print("Destination Products\n")
+
 for locationb in locations[startfrom:]:
     seq = seq + 1
     base_url = "https://" + locationb.website + "/wp-json/wc/v3/products"
