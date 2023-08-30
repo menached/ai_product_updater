@@ -1,21 +1,6 @@
-import openai
-import subprocess
-import sys
-import json
-import html
-import re
-import ssl
-import os
-import math
-import glob
-import pprint
-import nltk
-import pdb
-import requests
-import time
-import random
+import openai, subprocess, sys, json, html, re, ssl, os, math, glob, pprint, nltk, pdb, requests, time, random
 from PIL import Image, ImageDraw, ImageFont
-from PIL import UnidentifiedImageError
+
 if not nltk.data.find('tokenizers/punkt'):
     nltk.download('punkt', quiet=True)
 
@@ -37,17 +22,17 @@ sitelist = [
   { "subdomain": "walnutcreek", "site_id": 32 }
 ]
 
+location = sys.argv[1]
+sku = sys.argv[2]
+startfrom = int(sys.argv[3])
+
+credentials = {}
 def get_site_id(subdomain):
   for site in sitelist:
     if site["subdomain"] == subdomain:
       return site["site_id"]
   return None
-
-location = sys.argv[1]
-sku = sys.argv[2]
-startfrom = int(sys.argv[3])
-print(startfrom)
-credentials = {}
+print("Starting with site #", startfrom, " copying from ",location, " ", get_site_id(location))
 
 creds_file_path = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),  # Get the directory of the current file
@@ -267,6 +252,7 @@ for locationb in locations[startfrom:]:
     consumer_secret = locationb.website + "_consumer_secret:" + locationb.consumer_secret
     website = locationb.website
     subdomain = website.split('.')[0]
+    print("Get site # for ", subdomain, " ", get_site_id(subdomain))
     site_id = get_site_id(subdomain)
     print("Site ID:", site_id) 
     aikey = openai.api_key
