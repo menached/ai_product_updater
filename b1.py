@@ -236,25 +236,3 @@ with open(creds_file_path) as f:
                  consumer_secret, openai.api_key)
     )
         
-for locationa in locations[:1]:
-    base_url = "https://" + locationa.website + "/wp-json/wc/v3/products"
-    consumer_key = locationa.website + "_consumer_key:" + locationa.consumer_key
-    consumer_secret = locationa.website + "_consumer_secret:" + locationa.consumer_secret
-    aikey = openai.api_key
-    auth = (
-        locationa.consumer_key,
-        locationa.consumer_secret,
-    )
-    #city = locationa.city
-    #phone = locationa.phone
-    #website = locationa.website
-    response = requests.get(f'{base_url}', auth=auth, params={'sku': sku})
-    response.raise_for_status()
-    product = response.json()[0]
-    source_product = product
-    source_product['images'] = remove_keys(source_product['images'])
-    source_images = source_product['images'][:4]  
-    imagecounter = 0
-    for item in source_images:
-        imagecounter = imagecounter + 1
-        print("Source Image ", imagecounter, "name: ", item['name'], " src:", item['src'])
