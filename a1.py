@@ -99,7 +99,7 @@ def makeunique(new_unique_product_name):
     )
 
 def make_short_desc(current_short_description):
-    pdb.set_trace()
+    # pdb.set_trace()
     ai_response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -292,27 +292,28 @@ for locationb in locations[startfrom:]:
     product['meta_data'] = source_product['meta_data'] 
     product['price'] = source_product['price'] 
     product['price_html'] = source_product['price_html'] 
+    #product['brands'] = source_product['brands'] 
+    pdb.set_trace()
+    product['slug'] = source_product['slug'] 
     pdb.set_trace()
     if sku == '20665':
         product['short_description'] = new_short_description 
-        pdb.set_trace()
+        # pdb.set_trace()
         product['description'] = new_description 
     else:
         print("No descriptions defined for that product")
         product['short_description'] = source_product['short_description'] 
         product['description'] = source_product['description'] 
 
-    #product['brands'] = source_product['brands'] 
-    #product = source_product 
-    #product['slug'] = source_product['slug'] 
-    #pdb.set_trace()
     msgg = subdomain + " #" + str(seq) + " " + str(sku)
     print(msgg)
-    pdb.set_trace()
+    # pdb.set_trace()
     while True:
         product_name = generate_new_product_name(sku).replace('"','').replace('"','').replace("'","").replace("_"," ").replace("(","").replace(")","").replace(",","").replace("$","")
-        print("Is this new product name okay?: ", product_name)
-        choice = input("Do you want to use this? [Y/N]: ")
+        # print("Is this new product name okay?: ", product_name)
+        # pdb.set_trace()
+        print(product_name)
+        choice = input("Do you want to use this new name [Y/N]: ")
         if choice.lower() == "y":
             product['name'] = product_name 
             break
@@ -339,9 +340,16 @@ for locationb in locations[startfrom:]:
         elif choice.lower() == "n":
             break
 
-    print("Selected new product name: ", product['name'])
-
-    print("Check product data before updating")
+    print("Assigning new product name: ", product['name'])
+    imagecounter = 0
+    images = product['images']
+    for item in images:
+        imagecounter = imagecounter + 1
+        filename = os.path.basename(item['src'])
+        print("#",imagecounter," Name: ", item['name'], " Filename: ",filename )
+        print("Assigning new image name: ", product['images'])
+    #pprint.pprint(product['images'])
+    print()
     update_url = f'{base_url}/{product["id"]}'
     update_response = requests.put(update_url, json=product, auth=auth)
     #pdb.set_trace()
